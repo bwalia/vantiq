@@ -1,26 +1,250 @@
 @import "tailwindcss";
 
+/*
+ * Vantiq design system.
+ * Palette and typographic devices are extracted from the source proposal
+ * (Vantiq — 30-Day Lead Generation Trial). The original PDF is kept locally in docs/, outside version control.
+ *
+ * Tailwind v4 is configured entirely here — there is no tailwind.config.ts.
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --surface: #fcf8f5;
+  --surface-strong: #faf3ed;
+  --ink: #141110;
+  --muted: #6b615b;
+  --hairline: #ede2d9;
+
+  /* The document's exact accent. Display type and graphics only — at body
+     size it sits at 4.19:1 on white, so small text uses --accent-text. */
+  --accent: #a96e48;
+  --accent-text: #98613e;
+  --accent-strong: #8e5b39;
+  --accent-soft: #c99a7c;
+  --accent-faint: #e8d3c6;
+  --accent-wash: #f6ece4;
+
+  --shadow-soft: 0 1px 2px rgb(20 17 16 / 0.04), 0 8px 24px -12px rgb(20 17 16 / 0.08);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Warm near-black, not neutral. Accent lifts for contrast. */
+.theme-dark {
+  color-scheme: dark;
+
+  --bg: #100d0c;
+  --surface: #171312;
+  --surface-strong: #1e1917;
+  --ink: #f4ede8;
+  --muted: #a99c93;
+  --hairline: #2a2320;
+
+  --accent: #d79a6e;
+  --accent-text: #d79a6e;
+  --accent-strong: #e6b28c;
+  --accent-soft: #b98261;
+  --accent-faint: #3a2a21;
+  --accent-wash: #1c1614;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.theme-light) {
+    color-scheme: dark;
+
+    --bg: #100d0c;
+    --surface: #171312;
+    --surface-strong: #1e1917;
+    --ink: #f4ede8;
+    --muted: #a99c93;
+    --hairline: #2a2320;
+
+    --accent: #d79a6e;
+    --accent-text: #d79a6e;
+    --accent-strong: #e6b28c;
+    --accent-soft: #b98261;
+    --accent-faint: #3a2a21;
+    --accent-wash: #1c1614;
+
+    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-faint: var(--accent-faint);
+  --color-accent-wash: var(--accent-wash);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --shadow-soft: var(--shadow-soft);
+
+  --breakpoint-xs: 26rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--hairline);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Sticky header offset for anchor navigation. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    /*
+     * `clip` rather than `hidden`: it contains the decorative beam and the
+     * few pixels an entrance transform reaches past the edge, without creating
+     * a scroll container — which would break every position: sticky rail.
+     */
+    overflow-x: clip;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent-faint);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Uppercase micro-label in the accent colour — the document's eyebrow device. */
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+
+  .eyebrow-muted {
+    color: var(--muted);
+  }
+
+  /* Thin rule that fades accent → transparent, as on every page header. */
+  .rule-fade {
+    height: 2px;
+    border: 0;
+    background-image: linear-gradient(
+      to right,
+      var(--accent-soft) 0%,
+      var(--accent-faint) 45%,
+      transparent 100%
+    );
+  }
+
+  .rule-hairline {
+    height: 1px;
+    border: 0;
+    background-color: var(--hairline);
+  }
+
+  /* Warm card with the left accent border used throughout the proposal. */
+  .card-warm {
+    background-color: var(--surface-strong);
+    border-left: 2px solid var(--accent-soft);
+  }
+
+  .prose-body {
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  @media (min-width: 48rem) {
+    .prose-body {
+      font-size: 1.0625rem;
+    }
+  }
+}
+
+@layer utilities {
+  /*
+   * The hero entrance is CSS, not JavaScript, on purpose: an animation library
+   * would server-render the hero at opacity 0 and leave it blank until
+   * hydration. A keyframe starts on first paint instead.
+   */
+  .reveal {
+    animation: reveal-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .reveal-delayed {
+    animation-delay: 0.16s;
+  }
+
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/*
+ * Scroll-driven reveals are inert without JavaScript, which would otherwise
+ * leave their content permanently at opacity 0. Force the finished state.
+ */
+@media (scripting: none) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

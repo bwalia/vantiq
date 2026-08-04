@@ -1,0 +1,93 @@
+import { ImageResponse } from "next/og";
+import { site } from "@/lib/site";
+
+export const alt = `${site.name} — 30-Day Lead Generation Trial for care homes`;
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
+
+export default function OpengraphImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          backgroundColor: "#ffffff",
+          padding: "72px 80px",
+          fontFamily: "sans-serif",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              width: "100%",
+              height: 3,
+              background: "linear-gradient(to right, #c99a7c, #e8d3c6 45%, #ffffff)",
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              marginTop: 28,
+              fontSize: 20,
+              letterSpacing: 4,
+              color: "#a96e48",
+              textTransform: "uppercase",
+            }}
+          >
+            Meta advertising for care homes
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 92,
+              lineHeight: 1.02,
+              letterSpacing: -3,
+              color: "#141110",
+              fontWeight: 700,
+            }}
+          >
+            30-Day&nbsp;<span style={{ color: "#a96e48" }}>Lead</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 92,
+              lineHeight: 1.02,
+              letterSpacing: -3,
+              color: "#141110",
+              fontWeight: 700,
+            }}
+          >
+            Generation Trial
+          </div>
+          <div style={{ display: "flex", marginTop: 26, fontSize: 30, color: "#6b615b" }}>
+            Our fee is £0. You pay only for the ads, direct to Meta.
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: 26,
+            color: "#141110",
+          }}
+        >
+          <div style={{ display: "flex", fontWeight: 700, letterSpacing: -1 }}>vantiq</div>
+          <div style={{ display: "flex", color: "#6b615b", fontSize: 22 }}>
+            No contract · No auto-renewal
+          </div>
+        </div>
+      </div>
+    ),
+    size,
+  );
+}
