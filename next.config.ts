@@ -14,7 +14,7 @@ import type { NextConfig } from "next";
  */
 const isStaticExport = process.env.NEXT_STATIC_EXPORT === "true";
 
-/** e.g. "/vanitq" for a GitHub project page. Empty for a custom domain. */
+/** e.g. "/vantiq" for a GitHub project page. Empty for a custom domain. */
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const nextConfig: NextConfig = {

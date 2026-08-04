@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Fix the vanitq.fictionally.org redirect loop using DNS permissions alone.
+# Fix the vantiq.fictionally.org redirect loop using DNS permissions alone.
 #
 # The loop is caused by Cloudflare sitting in the request path on Flexible SSL:
 # it fetches the origin over plain HTTP, GitHub Pages answers 301 -> https://,
@@ -28,7 +28,7 @@
 set -euo pipefail
 
 ZONE="${CLOUDFLARE_ZONE:-fictionally.org}"
-HOST="${TARGET_HOST:-vanitq.fictionally.org}"
+HOST="${TARGET_HOST:-vantiq.fictionally.org}"
 API="https://api.cloudflare.com/client/v4"
 
 APPLY=false

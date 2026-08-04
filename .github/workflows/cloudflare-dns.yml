@@ -1,6 +1,6 @@
 name: ->Cloudflare DNS (point domain at WSL Proxy)
 
-# Idempotent upsert of the DNS record that puts vanitq.fictionally.org in front of
+# Idempotent upsert of the DNS record that puts vantiq.fictionally.org in front of
 # the WSL Proxy edge. Re-running with the same values is a no-op rather than a
 # duplicate record — the failure mode you get from a naive "POST a record" step.
 #
@@ -16,7 +16,7 @@ on:
       RECORD_NAME:
         description: "Full record name"
         required: true
-        default: "vanitq.fictionally.org"
+        default: "vantiq.fictionally.org"
         type: string
       RECORD_CONTENT:
         description: "Record value — the WSL Proxy edge"

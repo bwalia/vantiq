@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Fix the vanitq.fictionally.org redirect loop by moving the Cloudflare zone off
+# Fix the vantiq.fictionally.org redirect loop by moving the Cloudflare zone off
 # Flexible SSL.
 #
 # Why this is needed:
@@ -26,7 +26,7 @@
 set -euo pipefail
 
 ZONE="${CLOUDFLARE_ZONE:-fictionally.org}"
-HOST="${TARGET_HOST:-vanitq.fictionally.org}"
+HOST="${TARGET_HOST:-vantiq.fictionally.org}"
 API="https://api.cloudflare.com/client/v4"
 
 APPLY=false

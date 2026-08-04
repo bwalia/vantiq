@@ -183,7 +183,7 @@ Cloudflare, a container) instead — the default build already works there, unch
 
 ### Fronting the domain with WSL Proxy
 
-`vanitq.fictionally.org` can be served through the WSL Proxy edge instead of
+`vantiq.fictionally.org` can be served through the WSL Proxy edge instead of
 Cloudflare's, matching how the other sites in this estate are wired. The vhost
 definition, the DNS workflow and the full cutover order live in
 [`.github/wslproxy/README.md`](.github/wslproxy/README.md).

@@ -1,7 +1,7 @@
 # WSL Proxy domain registration
 
 Declarative source of truth for the WSL Proxy vhost that fronts
-`vanitq.fictionally.org`, plus the workflow that pushes it.
+`vantiq.fictionally.org`, plus the workflow that pushes it.
 
 ```
 .github/wslproxy/
@@ -16,9 +16,9 @@ Modelled on the same layout in `monitoring-go` and `diy-tax-return-uk`.
 
 ```
 browser
-  -> vanitq.fictionally.org        Cloudflare CNAME, DNS-only (grey cloud)
+  -> vantiq.fictionally.org        Cloudflare CNAME, DNS-only (grey cloud)
   -> pop0.wslproxy.com             terminates TLS via lua-resty-auto-ssl
-  -> http://185.199.10x.153:80     with Host: vanitq.fictionally.org
+  -> http://185.199.10x.153:80     with Host: vantiq.fictionally.org
   -> GitHub Pages                  serves the exported site
 ```
 
@@ -38,8 +38,8 @@ Measured against `185.199.108.153`:
 
 | Request | Result |
 | --- | --- |
-| HTTP :80, `Host: vanitq.fictionally.org` | 301 (with Enforce HTTPS on) |
-| HTTPS :443, SNI `vanitq.fictionally.org` | 200 |
+| HTTP :80, `Host: vantiq.fictionally.org` | 301 (with Enforce HTTPS on) |
+| HTTPS :443, SNI `vantiq.fictionally.org` | 200 |
 | HTTPS :443, SNI `bwalia.github.io` | 301 → the custom domain |
 
 The register workflow warns if the toggle is still on before you activate.
@@ -84,7 +84,7 @@ Do it in this order, or the site is down between steps:
    certificate *before* any traffic is sent to it.
 4. Run **->Cloudflare DNS** with `DRY_RUN=true`, then `DRY_RUN=false`, to move the
    record to `pop0.wslproxy.com`, grey cloud.
-5. Verify: `curl -sI https://vanitq.fictionally.org/` → `200`, and the certificate
+5. Verify: `curl -sI https://vantiq.fictionally.org/` → `200`, and the certificate
    issuer is Let's Encrypt rather than Cloudflare.
 
 To roll back, point the Cloudflare record at `bwalia.github.io` (orange cloud, SSL
@@ -96,6 +96,6 @@ same call.
 
 ## Adding another domain later
 
-Copy `servers/prod/host:vanitq.fictionally.org.json`, set `id` / `server_name` /
+Copy `servers/prod/host:vantiq.fictionally.org.json`, set `id` / `server_name` /
 the `Host` header to the new host, point `rules` at a rule id, add the server id to
 that rule's `servers` array, commit, and run the workflow for that env.

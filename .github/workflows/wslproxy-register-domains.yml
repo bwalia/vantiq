@@ -1,6 +1,6 @@
 name: Register WSL Proxy Domains (Vantiq)
 
-# Pushes the WSL Proxy rule + server (vhost) definition for vanitq.fictionally.org
+# Pushes the WSL Proxy rule + server (vhost) definition for vantiq.fictionally.org
 # to the gateway control plane, so the domain is served without an nginx reload.
 #
 # Modelled on the monitoring-go / diy-tax-return-uk workflows. Source of truth is
@@ -9,9 +9,9 @@ name: Register WSL Proxy Domains (Vantiq)
 #   .github/wslproxy/data/servers/<env>/host:<domain>.json
 #
 # Chain once live:
-#   browser -> vanitq.fictionally.org --(Cloudflare CNAME, DNS-only/grey cloud)-->
+#   browser -> vantiq.fictionally.org --(Cloudflare CNAME, DNS-only/grey cloud)-->
 #   pop0.wslproxy.com (terminates TLS via lua-resty-auto-ssl)
-#   -> http://185.199.10x.153:80 with Host: vanitq.fictionally.org -> GitHub Pages
+#   -> http://185.199.10x.153:80 with Host: vantiq.fictionally.org -> GitHub Pages
 #
 # Two prerequisites this workflow CANNOT do for you:
 #   1. GitHub Pages "Enforce HTTPS" must be OFF (repo Settings -> Pages, admin only).

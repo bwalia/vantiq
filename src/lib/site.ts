@@ -6,7 +6,7 @@
  * placeholders, so nothing invented can ship by accident. See README.md.
  */
 
-/** "/vanitq" on a GitHub project page; empty on a custom domain or a server deploy. */
+/** "/vantiq" on a GitHub project page; empty on a custom domain or a server deploy. */
 export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 /**
