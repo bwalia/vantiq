@@ -175,11 +175,21 @@ All optional; set under **Settings → Secrets and variables → Actions → Var
 | --- | --- |
 | `ENQUIRY_ENDPOINT` | Form service URL. Unset → the email fallback above. |
 | `CONTACT_EMAIL` | Enquiries inbox, shown in the footer and used by the fallback. |
-| `PAGES_CUSTOM_DOMAIN` | Serve from a custom domain: clears the base path, sets the canonical URL, writes a `CNAME`. Unset → `https://<owner>.github.io/<repo>`. |
+| `PAGES_CUSTOM_DOMAIN` | Override the custom domain. Normally unnecessary — see below. |
 
-The base path is worked out in bash inside the workflow, not with a `${{ a && b || c }}` expression —
-GitHub treats `''` as falsy, so that idiom silently falls through to the default in exactly the
-custom-domain case where the intended value *is* empty.
+### Base path
+
+A custom domain serves from the root; a project page serves from `/<repo>`. Getting this wrong
+breaks every asset URL, so the workflow **reads the domain from the Pages API** rather than assuming
+it: the repo's own settings are the source of truth, and nobody has to remember to keep a variable
+in sync with them. `PAGES_CUSTOM_DOMAIN` overrides the lookup if you ever need it to.
+
+The value is resolved in bash, not with a `${{ a && b || c }}` expression — GitHub treats `''` as
+falsy, so that idiom silently falls through to the default in exactly the custom-domain case where
+the intended value *is* empty.
+
+The `CNAME` is written into the artifact, because an Actions deploy replaces the whole site and
+would otherwise drop the custom-domain setting on publish.
 
 ## Before you deploy — placeholders that need real values
 

@@ -35,20 +35,32 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # A custom domain serves from the root; a project page serves from /<repo>.
+      # Getting this wrong breaks every asset URL, so the domain is read from the
+      # Pages API rather than assumed — the repo's own settings are the source of
+      # truth, and nobody has to remember to set a variable to match them.
+      #
       # Worked out in bash rather than a `${{ a && b || c }}` expression: GitHub
       # treats an empty string as falsy, so that idiom silently falls through to
-      # the default whenever the intended value is "" — exactly the custom-domain
-      # case this needs to get right.
+      # the default in exactly the custom-domain case where the value is "".
       - name: Resolve deploy URL and base path
         env:
-          CUSTOM_DOMAIN: ${{ vars.PAGES_CUSTOM_DOMAIN }}
+          GH_TOKEN: ${{ github.token }}
+          DOMAIN_OVERRIDE: ${{ vars.PAGES_CUSTOM_DOMAIN }}
         run: |
-          if [ -n "$CUSTOM_DOMAIN" ]; then
-            # A custom domain serves from the root.
+          domain="$DOMAIN_OVERRIDE"
+          if [ -z "$domain" ]; then
+            domain=$(gh api "repos/${{ github.repository }}/pages" --jq '.cname // empty' 2>/dev/null || true)
+          fi
+
+          if [ -n "$domain" ]; then
+            echo "Custom domain: $domain (serving from root)"
+            echo "PAGES_DOMAIN=$domain" >> "$GITHUB_ENV"
             echo "NEXT_PUBLIC_BASE_PATH=" >> "$GITHUB_ENV"
-            echo "NEXT_PUBLIC_SITE_URL=https://$CUSTOM_DOMAIN" >> "$GITHUB_ENV"
+            echo "NEXT_PUBLIC_SITE_URL=https://$domain" >> "$GITHUB_ENV"
           else
-            # A project page serves from /<repo>.
+            echo "Project page (serving from /${{ github.event.repository.name }})"
+            echo "PAGES_DOMAIN=" >> "$GITHUB_ENV"
             echo "NEXT_PUBLIC_BASE_PATH=/${{ github.event.repository.name }}" >> "$GITHUB_ENV"
             echo "NEXT_PUBLIC_SITE_URL=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}" >> "$GITHUB_ENV"
           fi
@@ -68,9 +80,11 @@ jobs:
       - name: Disable Jekyll processing
         run: touch out/.nojekyll
 
+      # An Actions deploy replaces the whole site, so the CNAME has to be part of
+      # the artifact or the custom domain setting is dropped on publish.
       - name: Write CNAME for custom domain
-        if: vars.PAGES_CUSTOM_DOMAIN != ''
-        run: echo "${{ vars.PAGES_CUSTOM_DOMAIN }}" > out/CNAME
+        if: env.PAGES_DOMAIN != ''
+        run: echo "$PAGES_DOMAIN" > out/CNAME
 
       - uses: actions/configure-pages@v5
 
