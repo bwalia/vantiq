@@ -90,6 +90,10 @@ Do it in this order, or the site is down between steps:
 To roll back, point the Cloudflare record at `bwalia.github.io` (orange cloud, SSL
 mode Full) and the site is back on the previous path.
 
+Step 4 is scripted: `scripts/cloudflare-unproxy.sh` grey-clouds the record with a
+`Zone:DNS:Edit` token, and `--target pop0.wslproxy.com` points it at the pop in the
+same call.
+
 ## Adding another domain later
 
 Copy `servers/prod/host:vanitq.fictionally.org.json`, set `id` / `server_name` /

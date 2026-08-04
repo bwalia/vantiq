@@ -147,6 +147,20 @@ downstream outage returns 502 rather than dropping a lead silently.
 A honeypot field is accepted silently and never delivered. There is no rate limiting — add it at the
 edge (Vercel WAF or similar) before going live.
 
+## Fixing the live domain
+
+Two scripts, both dry-run by default, both reading the token from the environment
+so it never lands in a file:
+
+| Script | Fixes the loop by | Token scope needed |
+| --- | --- | --- |
+| `scripts/cloudflare-unproxy.sh` | Taking Cloudflare out of the path (grey cloud) | `Zone:DNS:Edit` |
+| `scripts/fix-cloudflare-ssl.sh` | Moving the zone off Flexible SSL to Full | `Zone Settings:Edit` |
+
+Either one alone fixes it. Grey-clouding needs the smaller scope and is also a
+prerequisite for the WSL Proxy path; keeping Cloudflare in front and switching to
+Full retains its CDN and DDoS shield.
+
 ## Deployment
 
 Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): lint, static
