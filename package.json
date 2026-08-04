@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:static": "NEXT_STATIC_EXPORT=true next build",
+    "preview:static": "npx --yes serve out"
   },
   "dependencies": {
     "motion": "12.43.0",

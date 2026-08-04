@@ -5,6 +5,9 @@ export const alt = `${site.name} — 30-Day Lead Generation Trial for care homes
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+/** Rendered at build time so the image can be emitted by a static export. */
+export const dynamic = "force-static";
+
 export default function OpengraphImage() {
   return new ImageResponse(
     (

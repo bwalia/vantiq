@@ -11,9 +11,11 @@ import {
   STEPS,
   collectFieldErrors,
   enquirySchema,
+  type Enquiry,
   type EnquiryField,
   type FieldErrors,
 } from "@/lib/enquiry";
+import { enquiryEndpoint, site } from "@/lib/site";
 
 /** The form holds raw strings; parsing to the schema shape happens on submit. */
 type Draft = {
@@ -53,9 +55,35 @@ function toPayload(draft: Draft) {
   return { ...draft, beds };
 }
 
-type Status = "editing" | "submitting" | "sent" | "failed";
+type Status = "editing" | "submitting" | "sent" | "failed" | "handedOff";
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+
+/**
+ * Fallback for deploys with no endpoint (a static host and no form service):
+ * open the visitor's mail client with every answer already written out, so a
+ * completed funnel is never thrown away.
+ */
+function composeMailto(enquiry: Enquiry): string {
+  const lines = [
+    `Home: ${enquiry.homeName}`,
+    `Location: ${enquiry.location}`,
+    `Beds: ${enquiry.beds}`,
+    `Role: ${enquiry.role}`,
+    `Occupancy: ${enquiry.occupancy}`,
+    `Wants the ads to bring in: ${enquiry.goals.join(", ")}`,
+    `Ad spend in mind: ${enquiry.budget}`,
+    `Possible filming dates: ${enquiry.preferredDates}`,
+    "",
+    `Name: ${enquiry.contactName}`,
+    `Email: ${enquiry.email}`,
+    enquiry.phone ? `Phone: ${enquiry.phone}` : null,
+    enquiry.notes ? `\nNotes: ${enquiry.notes}` : null,
+  ].filter(Boolean);
+
+  const subject = `Filming enquiry — ${enquiry.homeName}`;
+  return `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+}
 
 export function EnquiryForm() {
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
@@ -147,11 +175,19 @@ export function EnquiryForm() {
       return;
     }
 
+    // No endpoint configured — a purely static deploy with no form service.
+    // Hand the answers to the visitor's email client rather than dropping them.
+    if (!enquiryEndpoint) {
+      window.location.href = composeMailto(parsed.data);
+      setStatus("handedOff");
+      return;
+    }
+
     setStatus("submitting");
     try {
-      const response = await fetch("/api/enquiries", {
+      const response = await fetch(enquiryEndpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(parsed.data),
       });
 
@@ -165,7 +201,8 @@ export function EnquiryForm() {
     }
   }
 
-  if (status === "sent") {
+  if (status === "sent" || status === "handedOff") {
+    const handedOff = status === "handedOff";
     return (
       <motion.div
         data-reveal=""
@@ -190,14 +227,32 @@ export function EnquiryForm() {
             />
           </svg>
         </span>
-        <p className="eyebrow mt-6">Enquiry received</p>
+        <p className="eyebrow mt-6">{handedOff ? "One last step" : "Enquiry received"}</p>
         <h3 className="mt-4 text-2xl md:text-3xl">
-          Thank you — we&apos;ll be in touch shortly.
+          {handedOff
+            ? "Your email is ready to send."
+            : "Thank you — we'll be in touch shortly."}
         </h3>
         <p className="mt-5 max-w-[56ch] text-[0.975rem] leading-relaxed text-muted">
-          We&apos;ll confirm one of your filming dates by email, and we can be live within the week
-          of the shoot. Nothing is committed until you say so — there is no contract and no
-          auto-renewal.
+          {handedOff ? (
+            <>
+              We&apos;ve opened your email app with your answers filled in — press send and it
+              reaches us. If nothing opened, write to{" "}
+              <a
+                href={`mailto:${site.contact.email}`}
+                className="text-accent-text underline decoration-accent-faint underline-offset-4"
+              >
+                {site.contact.email}
+              </a>
+              .
+            </>
+          ) : (
+            <>
+              We&apos;ll confirm one of your filming dates by email, and we can be live within the
+              week of the shoot. Nothing is committed until you say so — there is no contract and
+              no auto-renewal.
+            </>
+          )}
         </p>
       </motion.div>
     );

@@ -12,11 +12,16 @@ value the code needs from it is documented below.
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
-npm run build   # production build (type-checks as part of the build)
-npm run start   # serve the production build
+npm run dev             # http://localhost:3000
+npm run build           # production build (type-checks as part of the build)
+npm run start           # serve the production build
+npm run build:static    # static export to out/ (what GitHub Pages gets)
+npm run preview:static  # serve out/
 npm run lint
 ```
+
+Copy `.env.example` to `.env.local` to override the site URL, base path, enquiry endpoint or
+contact email. Everything works with none of them set.
 
 Node 24 or newer.
 
@@ -142,14 +147,48 @@ downstream outage returns 502 rather than dropping a lead silently.
 A honeypot field is accepted silently and never delivered. There is no rate limiting — add it at the
 edge (Vercel WAF or similar) before going live.
 
+## Deployment
+
+Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): lint, static
+export, publish to GitHub Pages. Enable it once under **Settings → Pages → Source → GitHub Actions**.
+
+### The one thing that does not survive the move
+
+GitHub Pages serves files; it does not run a Node server. **The `/api/enquiries` Route Handler
+cannot exist there.** `next.config.ts` handles that declaratively rather than by deleting files in
+CI: the handler lives at `route.node.ts`, and the static build narrows `pageExtensions` to
+`["ts", "tsx"]`, which drops it out of the route graph. A normal `npm run build` keeps it.
+
+So the form needs somewhere else to post. Set the `ENQUIRY_ENDPOINT` repository variable to any form
+service that accepts a JSON POST (Formspree, Basin, Web3Forms). **Until you do, the form falls back
+to opening a pre-filled email** — clunky, but a completed funnel is never silently dropped, which is
+what would happen if it kept POSTing to a URL that no longer exists.
+
+If you would rather keep the real endpoint, deploy to a host that runs Node (Vercel, Netlify,
+Cloudflare, a container) instead — the default build already works there, unchanged.
+
+### Repository variables
+
+All optional; set under **Settings → Secrets and variables → Actions → Variables**.
+
+| Variable | Effect |
+| --- | --- |
+| `ENQUIRY_ENDPOINT` | Form service URL. Unset → the email fallback above. |
+| `CONTACT_EMAIL` | Enquiries inbox, shown in the footer and used by the fallback. |
+| `PAGES_CUSTOM_DOMAIN` | Serve from a custom domain: clears the base path, sets the canonical URL, writes a `CNAME`. Unset → `https://<owner>.github.io/<repo>`. |
+
+The base path is worked out in bash inside the workflow, not with a `${{ a && b || c }}` expression —
+GitHub treats `''` as falsy, so that idiom silently falls through to the default in exactly the
+custom-domain case where the intended value *is* empty.
+
 ## Before you deploy — placeholders that need real values
 
 These are left as visible `TODO` strings on purpose, so nothing invented can ship by accident.
 
 | Where | What |
 | --- | --- |
-| `src/lib/site.ts` → `url` | production domain (used by canonical URL, OG tags, sitemap, robots) |
-| `src/lib/site.ts` → `contact.email` | enquiries inbox — appears in the footer, the enquiry section and JSON-LD |
+| `src/lib/site.ts` → `url` | production domain (canonical URL, OG tags, sitemap, robots). Overridable with `NEXT_PUBLIC_SITE_URL`; the Pages workflow sets it for you |
+| `src/lib/site.ts` → `contact.email` | enquiries inbox — footer, enquiry section, JSON-LD and the email fallback. Overridable with `NEXT_PUBLIC_CONTACT_EMAIL` |
 | `src/lib/site.ts` → `contact.phone` | contact number, or remove the footer line |
 | `src/lib/site.ts` → `contact.companyNumber` | company registration line in the footer |
 | `src/lib/content.ts` → `founders.together.figure` | the source proposal leaves this as `[00]`. Supply the real number or delete the `together` block — do not estimate it |
@@ -165,6 +204,9 @@ per-recipient variables and have been rewritten as generic site copy rather than
 - One `h1`; `header` / `main` / `footer` / `nav` landmarks present; no unlabelled form controls.
 - Every text/background pair in both themes meets WCAG AA (4.5:1 body, 3:1 large).
 - Funnel driven end to end by keyboard, including the validation-error state and submission.
+- The static export was served from a simulated `/<repo>` sub-path and walked end to end: no broken
+  requests, hydration intact, wizard advancing, and the email fallback engaging in place of a POST
+  to an endpoint that is not there.
 - With `prefers-reduced-motion: reduce`, every element settles at full opacity and no transform.
 - With JavaScript disabled entirely, no content renders below `opacity: 0.9` (bar the disabled
   Back button, which is meant to look disabled).
