@@ -48,7 +48,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           DOMAIN_OVERRIDE: ${{ vars.PAGES_CUSTOM_DOMAIN }}
         run: |
+          # In order: explicit override, the repo's own CNAME file, the Pages API.
           domain="$DOMAIN_OVERRIDE"
+          if [ -z "$domain" ] && [ -f CNAME ]; then
+            domain=$(tr -d '[:space:]' < CNAME)
+          fi
           if [ -z "$domain" ]; then
             domain=$(gh api "repos/${{ github.repository }}/pages" --jq '.cname // empty' 2>/dev/null || true)
           fi

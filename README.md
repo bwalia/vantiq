@@ -180,9 +180,15 @@ All optional; set under **Settings → Secrets and variables → Actions → Var
 ### Base path
 
 A custom domain serves from the root; a project page serves from `/<repo>`. Getting this wrong
-breaks every asset URL, so the workflow **reads the domain from the Pages API** rather than assuming
-it: the repo's own settings are the source of truth, and nobody has to remember to keep a variable
-in sync with them. `PAGES_CUSTOM_DOMAIN` overrides the lookup if you ever need it to.
+breaks every asset URL, so the workflow **works the domain out for itself** rather than assuming
+it, in this order:
+
+1. the `PAGES_CUSTOM_DOMAIN` repository variable, if set
+2. the repo's own `CNAME` file
+3. the Pages API (`repos/<owner>/<repo>/pages`, field `cname`)
+
+Nothing has to be kept in sync by hand. Note that `output: export` only copies `public/`, so a
+root `CNAME` never reaches the build on its own — the workflow writes it into `out/`.
 
 The value is resolved in bash, not with a `${{ a && b || c }}` expression — GitHub treats `''` as
 falsy, so that idiom silently falls through to the default in exactly the custom-domain case where
