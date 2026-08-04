@@ -1,0 +1,44 @@
+{
+  "id": "vantiq-prod-default",
+  "name": "vantiq-prod-default",
+  "profile_id": "prod",
+  "priority": 1,
+  "rules_tags": ["vantiq", "prod", "github-pages"],
+  "match": {
+    "rules": {
+      "path": "/",
+      "path_key": "starts_with"
+    },
+    "response": {
+      "code": 305,
+      "redirect_uri": "185.199.108.153:80",
+      "strip_path": false,
+      "backends": [
+        {
+          "address": "185.199.108.153:80",
+          "weight": 25,
+          "label": "GitHub Pages edge 1 of 4. Plain HTTP on :80 — the same shape every other wslproxy backend uses. Requires GitHub Pages 'Enforce HTTPS' to be OFF, otherwise :80 answers 301 and the browser loops. Visitor-facing TLS is terminated by the pop (auto_ssl), not here."
+        },
+        {
+          "address": "185.199.109.153:80",
+          "weight": 25,
+          "label": "GitHub Pages edge 2 of 4."
+        },
+        {
+          "address": "185.199.110.153:80",
+          "weight": 25,
+          "label": "GitHub Pages edge 3 of 4."
+        },
+        {
+          "address": "185.199.111.153:80",
+          "weight": 25,
+          "label": "GitHub Pages edge 4 of 4."
+        }
+      ],
+      "routing": {
+        "mode": "weighted"
+      }
+    }
+  },
+  "servers": ["host:vanitq.fictionally.org"]
+}

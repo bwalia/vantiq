@@ -1,0 +1,106 @@
+name: ->Cloudflare DNS (point domain at WSL Proxy)
+
+# Idempotent upsert of the DNS record that puts vanitq.fictionally.org in front of
+# the WSL Proxy edge. Re-running with the same values is a no-op rather than a
+# duplicate record — the failure mode you get from a naive "POST a record" step.
+#
+# PROXIED defaults to false on purpose. The pop terminates TLS itself with
+# lua-resty-auto-ssl, which solves ACME HTTP-01 over port 80. Orange-clouding the
+# record hides that challenge behind Cloudflare and the certificate never issues.
+#
+# Self-contained: no scripts from the other repos, only CLOUDFLARE_API_TOKEN.
+
+on:
+  workflow_dispatch:
+    inputs:
+      RECORD_NAME:
+        description: "Full record name"
+        required: true
+        default: "vanitq.fictionally.org"
+        type: string
+      RECORD_CONTENT:
+        description: "Record value — the WSL Proxy edge"
+        required: true
+        default: "pop0.wslproxy.com"
+        type: string
+      RECORD_TYPE:
+        description: "Record type"
+        required: true
+        default: "CNAME"
+        type: choice
+        options:
+          - CNAME
+          - A
+          - AAAA
+          - TXT
+      PROXIED:
+        description: "Proxy through Cloudflare (orange cloud). Leave false so the pop can solve ACME HTTP-01."
+        required: false
+        default: false
+        type: boolean
+      DRY_RUN:
+        description: "Show what would change without writing"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  dns:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upsert DNS record
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          ZONE: ${{ vars.CLOUDFLARE_ZONE || 'fictionally.org' }}
+          NAME: ${{ inputs.RECORD_NAME }}
+          CONTENT: ${{ inputs.RECORD_CONTENT }}
+          TYPE: ${{ inputs.RECORD_TYPE }}
+          PROXIED: ${{ inputs.PROXIED }}
+          DRY_RUN: ${{ inputs.DRY_RUN }}
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4"
+          auth=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json")
+
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || { echo "::error::Set the CLOUDFLARE_API_TOKEN secret (needs Zone:DNS:Edit, plus Zone:Zone:Read if CLOUDFLARE_ZONE_ID is unset)."; exit 1; }
+
+          # Guard against pointing a record at the proxy while it would break TLS.
+          if [ "$TYPE" = "CNAME" ] && [ "$PROXIED" = "true" ]; then
+            echo "::warning::PROXIED=true on a CNAME to the pop hides the ACME HTTP-01 challenge behind Cloudflare. The certificate will not issue."
+          fi
+
+          zone_id="$CLOUDFLARE_ZONE_ID"
+          if [ -z "$zone_id" ]; then
+            zone_id=$(curl -sS "${auth[@]}" "$API/zones?name=$ZONE" | jq -r '.result[0].id // empty')
+            [ -n "$zone_id" ] || { echo "::error::Could not resolve a zone id for '$ZONE'. Set CLOUDFLARE_ZONE_ID, or give the token Zone:Zone:Read."; exit 1; }
+          fi
+          echo "Zone $ZONE -> $zone_id"
+
+          existing=$(curl -sS "${auth[@]}" "$API/zones/$zone_id/dns_records?name=$NAME")
+          rec_id=$(echo "$existing" | jq -r '.result[0].id // empty')
+          cur=$(echo "$existing" | jq -r '.result[0] | "\(.type) \(.content) proxied=\(.proxied)"' 2>/dev/null || echo "none")
+
+          echo "current: ${cur:-none}"
+          echo "desired: $TYPE $CONTENT proxied=$PROXIED"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "::notice::DRY_RUN — nothing written. Re-run with DRY_RUN=false to apply."
+            exit 0
+          fi
+
+          body=$(jq -cn --arg t "$TYPE" --arg n "$NAME" --arg c "$CONTENT" --argjson p "$PROXIED" \
+            '{type: $t, name: $n, content: $c, ttl: 1, proxied: $p}')
+
+          if [ -n "$rec_id" ]; then
+            resp=$(curl -sS -X PUT "${auth[@]}" "$API/zones/$zone_id/dns_records/$rec_id" --data "$body")
+            action="updated"
+          else
+            resp=$(curl -sS -X POST "${auth[@]}" "$API/zones/$zone_id/dns_records" --data "$body")
+            action="created"
+          fi
+
+          if [ "$(echo "$resp" | jq -r '.success')" != "true" ]; then
+            echo "::error::Cloudflare rejected the change"; echo "$resp" | jq '.errors'; exit 1
+          fi
+          echo "Record $action: $(echo "$resp" | jq -r '.result | "\(.type) \(.name) -> \(.content) proxied=\(.proxied)"')"

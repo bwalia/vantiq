@@ -167,6 +167,19 @@ what would happen if it kept POSTing to a URL that no longer exists.
 If you would rather keep the real endpoint, deploy to a host that runs Node (Vercel, Netlify,
 Cloudflare, a container) instead — the default build already works there, unchanged.
 
+### Fronting the domain with WSL Proxy
+
+`vanitq.fictionally.org` can be served through the WSL Proxy edge instead of
+Cloudflare's, matching how the other sites in this estate are wired. The vhost
+definition, the DNS workflow and the full cutover order live in
+[`.github/wslproxy/README.md`](.github/wslproxy/README.md).
+
+One thing to know before starting: every WSL Proxy backend is plaintext HTTP on
+port 80, and GitHub Pages answers port 80 with a `301` while **Enforce HTTPS** is
+on — the same redirect loop the site hit behind Cloudflare's Flexible SSL. Turning
+that toggle off (repo Settings → Pages, admin only) fixes the current loop *and* is
+the prerequisite for the proxy path. It is the one action that unblocks both.
+
 ### Repository variables
 
 All optional; set under **Settings → Secrets and variables → Actions → Variables**.

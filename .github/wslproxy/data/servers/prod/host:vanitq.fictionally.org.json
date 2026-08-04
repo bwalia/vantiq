@@ -1,0 +1,30 @@
+{
+  "id": "host:vanitq.fictionally.org",
+  "server_name": "vanitq.fictionally.org",
+  "proxy_server_name": "vanitq.fictionally.org",
+  "root": "/var/www/html",
+  "index": "index.html",
+  "access_log": "logs/vanitq.fictionally.org.access.log",
+  "error_log": "logs/vanitq.fictionally.org.error.log",
+  "config_status": false,
+  "profile_id": "prod",
+  "rules": "vantiq-prod-default",
+  "listens": [
+    {
+      "listen": "80"
+    }
+  ],
+  "ssl_enabled": true,
+  "ssl_force_https": true,
+  "ssl_staging": false,
+  "ssl_auto_renew": true,
+  "ssl_email": "SET_VIA_WSLPROXY_SSL_EMAIL",
+  "cache_enabled": false,
+  "match_cases": {},
+  "custom_headers": [
+    {
+      "header_key": "Host",
+      "header_value": "vanitq.fictionally.org"
+    }
+  ]
+}

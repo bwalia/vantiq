@@ -1,0 +1,202 @@
+name: Register WSL Proxy Domains (Vantiq)
+
+# Pushes the WSL Proxy rule + server (vhost) definition for vanitq.fictionally.org
+# to the gateway control plane, so the domain is served without an nginx reload.
+#
+# Modelled on the monitoring-go / diy-tax-return-uk workflows. Source of truth is
+# committed JSON, edited by hand:
+#   .github/wslproxy/data/rules/<env>/<rule-id>.json
+#   .github/wslproxy/data/servers/<env>/host:<domain>.json
+#
+# Chain once live:
+#   browser -> vanitq.fictionally.org --(Cloudflare CNAME, DNS-only/grey cloud)-->
+#   pop0.wslproxy.com (terminates TLS via lua-resty-auto-ssl)
+#   -> http://185.199.10x.153:80 with Host: vanitq.fictionally.org -> GitHub Pages
+#
+# Two prerequisites this workflow CANNOT do for you:
+#   1. GitHub Pages "Enforce HTTPS" must be OFF (repo Settings -> Pages, admin only).
+#      With it on, Pages answers :80 with a 301 and the browser loops forever.
+#   2. The Cloudflare record must be DNS-only (grey cloud), or ACME HTTP-01 cannot
+#      reach the pop and the certificate never issues. See cloudflare-dns.yml.
+#
+# Push method — /api/projects/import. Import writes each record verbatim under
+# data/<type>/<profile_id>/<id>.json, so the committed slug ids are PRESERVED and
+# the server->rule link (server.rules == rule.id) stays intact. A plain POST
+# /api/rules would mint a fresh UUID and break that link.
+#
+# Runner: self-hosted. The control plane only answers on the operator's network,
+# so a GitHub-hosted runner's login times out (curl exit 28).
+
+on:
+  workflow_dispatch:
+    inputs:
+      TARGET_ENV:
+        description: "Profile dir to push."
+        required: true
+        default: prod
+        type: choice
+        options:
+          - prod
+          - acc
+          - test
+          - int
+      GATEWAY_DOMAIN:
+        description: "Control-plane API base URL. Blank -> WSLPROXY_GATEWAY_DOMAIN repo variable."
+        required: false
+        type: string
+      ADMIN_EMAIL:
+        description: "Admin email (blank -> WSLPROXY_ADMIN_EMAIL var). Ignored if WSLPROXY_TOKEN is set."
+        required: false
+        type: string
+      ACTIVATE_CONFIG:
+        description: "Push with config_status=true so the gateway writes the vhost and goes live. Leave false to stage."
+        required: false
+        default: false
+        type: boolean
+      DRY_RUN:
+        description: "Print the import payloads without calling the API"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  push-domains:
+    name: "Push ${{ inputs.TARGET_ENV }} domains to WSL Proxy"
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Ensure jq + curl
+        run: |
+          for t in jq curl; do
+            command -v "$t" >/dev/null || { echo "::error::$t is not installed on the self-hosted runner"; exit 1; }
+          done
+
+      - name: Validate inputs and data dir
+        env:
+          TARGET_ENV: ${{ inputs.TARGET_ENV }}
+          GATEWAY_DOMAIN: ${{ inputs.GATEWAY_DOMAIN || vars.WSLPROXY_GATEWAY_DOMAIN }}
+          WSLPROXY_TOKEN: ${{ secrets.WSLPROXY_TOKEN }}
+          ADMIN_PASSWORD_SECRET: ${{ secrets.ADMIN_PASSWORD }}
+          SSL_EMAIL: ${{ vars.WSLPROXY_SSL_EMAIL }}
+        run: |
+          set -euo pipefail
+          RULES_DIR=".github/wslproxy/data/rules/${TARGET_ENV}"
+          SERVERS_DIR=".github/wslproxy/data/servers/${TARGET_ENV}"
+
+          [ -n "$GATEWAY_DOMAIN" ] || { echo "::error::No gateway API URL — set the GATEWAY_DOMAIN input or the WSLPROXY_GATEWAY_DOMAIN repo variable."; exit 1; }
+          [ -d "$SERVERS_DIR" ] || { echo "::error::No server data dir for env '$TARGET_ENV' ($SERVERS_DIR)"; exit 1; }
+          SCOUNT=$(find "$SERVERS_DIR" -name '*.json' | wc -l | tr -d ' ')
+          [ "$SCOUNT" != "0" ] || { echo "::error::No server JSON files under $SERVERS_DIR"; exit 1; }
+          if [ -z "$WSLPROXY_TOKEN" ] && [ -z "$ADMIN_PASSWORD_SECRET" ]; then
+            echo "::error::No credentials — set the WSLPROXY_TOKEN secret, or ADMIN_PASSWORD."; exit 1
+          fi
+          # The committed JSON carries a placeholder rather than a real address, so
+          # nobody's personal email ends up in a public repo.
+          [ -n "$SSL_EMAIL" ] || { echo "::error::Set the WSLPROXY_SSL_EMAIL repository variable — Let's Encrypt needs a contact address."; exit 1; }
+
+          MISSING=0
+          for f in "$SERVERS_DIR"/*.json; do
+            RID=$(jq -r '.rules // empty' "$f")
+            if [ -n "$RID" ] && [ ! -f "$RULES_DIR/$RID.json" ]; then
+              echo "::error::$(basename "$f") references rule '$RID' but $RULES_DIR/$RID.json is missing"; MISSING=$((MISSING+1))
+            fi
+          done
+          [ "$MISSING" -gt 0 ] && exit 1
+          echo "Env '$TARGET_ENV': $(find "$RULES_DIR" -name '*.json' | wc -l | tr -d ' ') rule(s), $SCOUNT server(s)"
+          jq -r '.server_name' "$SERVERS_DIR"/*.json | sed 's/^/  - /'
+
+      - name: Warn if GitHub Pages still enforces HTTPS
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          ENFORCED=$(gh api "repos/${{ github.repository }}/pages" --jq '.https_enforced' 2>/dev/null || echo "unknown")
+          if [ "$ENFORCED" = "true" ]; then
+            echo "::warning::GitHub Pages still has 'Enforce HTTPS' ON. The :80 backends in this rule will receive a 301 and the site will redirect-loop. Turn it off under Settings -> Pages before activating."
+          else
+            echo "Pages https_enforced=$ENFORCED — :80 backends will be served directly."
+          fi
+
+      - name: Resolve bearer token
+        id: auth
+        env:
+          GATEWAY_DOMAIN: ${{ inputs.GATEWAY_DOMAIN || vars.WSLPROXY_GATEWAY_DOMAIN }}
+          WSLPROXY_TOKEN: ${{ secrets.WSLPROXY_TOKEN }}
+          ADMIN_EMAIL: ${{ inputs.ADMIN_EMAIL || vars.WSLPROXY_ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -n "$WSLPROXY_TOKEN" ]; then
+            echo "Using WSLPROXY_TOKEN secret as bearer."
+            TOKEN="$WSLPROXY_TOKEN"
+          else
+            [ -n "$ADMIN_EMAIL" ] || { echo "::error::No WSLPROXY_TOKEN and no admin email (set ADMIN_EMAIL input or WSLPROXY_ADMIN_EMAIL var)."; exit 1; }
+            echo "Logging in to $GATEWAY_DOMAIN as $ADMIN_EMAIL ..."
+            RESPONSE=$(curl -sS --max-time 30 --connect-timeout 10 -X POST "${GATEWAY_DOMAIN%/}/api/user/login" \
+              -H "Content-Type: application/json" \
+              -d "{\"email\": \"$ADMIN_EMAIL\", \"password\": \"$ADMIN_PASSWORD\"}") || {
+                echo "::error::Could not reach the control plane at $GATEWAY_DOMAIN. Is this runner on a network that can reach it?"; exit 1; }
+            TOKEN=$(echo "$RESPONSE" | jq -r '.data.accessToken')
+            if [ "$TOKEN" = "null" ] || [ -z "$TOKEN" ]; then
+              echo "::error::Login failed"; echo "$RESPONSE" | jq '.' 2>/dev/null || echo "$RESPONSE"; exit 1
+            fi
+            echo "Login successful."
+          fi
+          echo "::add-mask::$TOKEN"
+          echo "TOKEN=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Import rules then servers
+        env:
+          TOKEN: ${{ steps.auth.outputs.TOKEN }}
+          GATEWAY_DOMAIN: ${{ inputs.GATEWAY_DOMAIN || vars.WSLPROXY_GATEWAY_DOMAIN }}
+          TARGET_ENV: ${{ inputs.TARGET_ENV }}
+          ACTIVATE_CONFIG: ${{ inputs.ACTIVATE_CONFIG }}
+          DRY_RUN: ${{ inputs.DRY_RUN }}
+          SSL_EMAIL: ${{ vars.WSLPROXY_SSL_EMAIL }}
+        run: |
+          set -euo pipefail
+          RULES_DIR=".github/wslproxy/data/rules/${TARGET_ENV}"
+          SERVERS_DIR=".github/wslproxy/data/servers/${TARGET_ENV}"
+
+          RULES_ARR=$(jq -s '.' "$RULES_DIR"/*.json 2>/dev/null || echo '[]')
+          # config_status is a workflow toggle, not a commit — override it here.
+          # ssl_email is injected so the committed JSON holds no real address.
+          SERVERS_ARR=$(jq -s \
+            --argjson active "$ACTIVATE_CONFIG" \
+            --arg email "$SSL_EMAIL" \
+            'map(.config_status = $active | .ssl_email = $email)' "$SERVERS_DIR"/*.json)
+
+          import() {
+            local dtype="$1" arr="$2" body resp code
+            body=$(jq -cn --argjson data "$arr" --arg dt "$dtype" '{data: $data, dataType: $dt}')
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "── DRY_RUN import dataType=$dtype ($(echo "$arr" | jq 'length') records) ──"
+              echo "$arr" | jq '[.[] | {id, name: (.name // .server_name), profile_id, config_status}]'
+              return 0
+            fi
+            resp=$(curl -sS --max-time 60 --connect-timeout 10 -w "\n%{http_code}" -X POST "${GATEWAY_DOMAIN%/}/api/projects/import?_format=json" \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "x-platform: react-admin" \
+              -H "Content-Type: application/json" \
+              --data-raw "$body")
+            code=$(echo "$resp" | tail -n1); echo "$resp" | sed '$d'
+            echo "  dataType=$dtype -> HTTP $code"
+            [ "$code" = "200" ] || [ "$code" = "201" ] || { echo "::error::Import of $dtype failed (HTTP $code)"; return 1; }
+          }
+
+          # Rules first so the servers' rule references resolve.
+          if [ "$(echo "$RULES_ARR" | jq 'length')" -gt 0 ]; then import rules "$RULES_ARR"; else echo "No rule files for $TARGET_ENV — skipping."; fi
+          # dataType MUST be "servers" (plural) — the gateway builds the write path
+          # from dataType and reads vhosts from data/servers/<profile>/host:<host>.json.
+          import servers "$SERVERS_ARR"
+
+          echo "============================================"
+          echo "  WSL Proxy import — ${TARGET_ENV}"
+          echo "  rules:   $(echo "$RULES_ARR" | jq 'length')"
+          echo "  servers: $(echo "$SERVERS_ARR" | jq 'length')  (config_status=${ACTIVATE_CONFIG})"
+          echo "============================================"
+          if [ "$DRY_RUN" != "true" ] && [ "$ACTIVATE_CONFIG" != "true" ]; then
+            echo "::notice::config_status=false — servers are staged. Re-run with ACTIVATE_CONFIG=true (or activate in the admin UI) to write the vhost and go live."
+          fi
