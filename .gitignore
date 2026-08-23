@@ -43,3 +43,10 @@ next-env.d.ts
 
 # Source proposal — kept locally, not published (see README)
 /docs/
+
+# Claude Code — .claude/skills is shared; local-only state is not
+.claude/settings.local.json
+.claude/.headroom_wrap_marker.json
+
+# Serena (local tool state)
+/.serena/

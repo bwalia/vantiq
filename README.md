@@ -1,12 +1,113 @@
 # Vantiq — care home marketing site
 
-A marketing site for Vantiq's 30-day, zero-agency-fee Meta advertising trial for UK care homes.
-All copy, colour and typographic devices are taken from the source proposal,
-`Vantiq-Care-Home-Trial-Proposal.pdf`.
+The website for Vantiq's 30-day, zero-agency-fee Meta advertising trial for UK care homes.
+Live at **https://vantiq.fictionally.org**.
 
-That PDF is **not** in this repository — `/docs/` is gitignored, because the proposal carries
-pricing and founder credentials and this repo is public. Keep your copy at `docs/` locally; every
-value the code needs from it is documented below.
+This README is in two parts:
+
+1. **[Updating the site — no coding needed](#part-1--updating-the-site-no-coding-needed)** — for anyone
+   who can use a web browser.
+2. **[Developer guide](#part-2--developer-guide)** — the technical reference.
+
+---
+
+## Part 1 — Updating the site (no coding needed)
+
+### How publishing works, in one paragraph
+
+All of the site's text lives in a couple of files in this repository. You edit a file on the
+GitHub website, press **Commit changes**, and an automated pipeline rebuilds and publishes the
+site by itself — the change is live in about 2–3 minutes. There is a safety net: if an edit
+breaks something, the publish fails and **the live site simply stays as it was**. You cannot take
+the site down by editing text.
+
+### Where the words live
+
+| You want to change… | Edit this file |
+| --- | --- |
+| Any heading, sentence, price, bullet point or button label on the page | `src/lib/content.ts` |
+| Contact email, phone number, company registration number, menu labels | `src/lib/site.ts` |
+
+Inside `src/lib/content.ts`, the page reads top to bottom in the same order as the file. Each
+block is named after its section:
+
+| Name in the file | Section of the page |
+| --- | --- |
+| `hero` | The big opening screen and its headline, buttons and figures |
+| `audiences` | "Who the ads can target" |
+| `pricing` | "What it costs" |
+| `whyMeta` | "Why Meta" |
+| `craft` | "The videos" and "The targeting" |
+| `scope` | "What each side does" — what's included, what we need from you |
+| `reassurance` | "Already at full occupancy?" and "After the trial" |
+| `qualification` | "How we qualify the leads" |
+| `founders` | "Who you'll be working with" |
+| `closing` | The final "Tell us two or three dates…" call to action |
+
+### Step by step: changing some text
+
+1. Go to **https://github.com/bwalia/vantiq** and log in.
+2. Click into the folders: **src → lib → content.ts** (or `site.ts` for contact details).
+3. Click the **pencil icon** (top right of the file, "Edit this file").
+4. Find the text you want to change — **Ctrl+F / Cmd+F** and searching for a phrase you can see
+   on the website is the quickest way.
+5. Change **only the words between the quotation marks** `"like this"`.
+6. Click **Commit changes…** (green button), write a short note describing what you changed
+   (e.g. *"Update recommended ad spend wording"*), keep **"Commit directly to the main branch"**
+   selected, and commit.
+7. Open the **Actions** tab at the top of the repository. Your change appears at the top of the
+   list: a yellow dot means it's publishing, a green tick ✅ means it's live.
+8. Visit https://vantiq.fictionally.org and refresh. If you don't see the change, do a hard
+   refresh: **Cmd+Shift+R** (Mac) or **Ctrl+F5** (Windows).
+
+### The three rules
+
+1. **Only change text between the quotation marks.** Everything else — words like
+   `export const`, the brackets, commas and colons — is machinery that makes the page work.
+   Don't delete or move the quote marks at either end of a piece of text. If this goes wrong,
+   nothing bad happens publicly: the publish fails (red ✗ in Actions) and the live site keeps
+   showing the old version until someone fixes the file.
+2. **Don't invent numbers or claims.** Nothing on the site may state a statistic, outcome,
+   client name or credential that isn't in the source proposal PDF. If a new claim needs to go
+   up, it goes in the PDF conversation first.
+3. **Type into GitHub directly** rather than pasting from Word. Word silently converts straight
+   quotes `"` into curly ones `”`, and a curly quote in the wrong place breaks the build.
+   (Apostrophes *inside* your sentences are fine — "you've", "we'll" — the rule is about the
+   quote marks that wrap each piece of text.)
+
+### If something goes wrong
+
+- **Red ✗ in the Actions tab** — your change did *not* go live and the site is unaffected.
+  To undo: open the file again, click **History** (top right), open the last good version and
+  restore it — or just ask a developer, nothing is on fire.
+- **Change committed but not showing** — check Actions finished with a green tick, then hard
+  refresh the browser. The pipeline takes 2–3 minutes.
+
+### The easiest option: ask Claude Code
+
+If this repository is open in [Claude Code](https://claude.com/claude-code) on your computer,
+you can skip all of the above. Three helpers are built into this project — type the command, or
+just say what you want in plain English and the right one is picked up automatically:
+
+| Type this | What happens |
+| --- | --- |
+| `/update-content` *change the recommended ad spend to £600–£1,200* | Claude makes the edit, checks nothing is broken, shows you old wording → new wording, publishes, and watches until the change is live |
+| `/is-it-live` | Tells you whether your latest change is live, still publishing, or never got sent — and what to do about it |
+| `/undo-last-change` | Shows recent changes in plain English, asks which to undo, and puts the previous wording back live |
+
+You never need to touch the files yourself: *"update the phone number in the footer"*,
+*"put the pricing wording back how it was yesterday"*, *"is my change live yet?"* all work as
+plain sentences. Every publish is checked before it goes out, and a failed check
+leaves the live site exactly as it was.
+
+---
+
+## Part 2 — Developer guide
+
+All copy, colour and typographic devices are taken from the source proposal,
+`Vantiq-Care-Home-Trial-Proposal.pdf`. That PDF is **not** in this repository — `/docs/` is
+gitignored, because the proposal carries pricing and founder credentials and this repo is public.
+Keep your copy at `docs/` locally; every value the code needs from it is documented below.
 
 ## Running it
 
@@ -78,6 +179,8 @@ src/
     content.ts              ALL page copy
     site.ts                 site config and contact details
     enquiry.ts              zod schema + step definitions
+.claude/
+  skills/                   the editor-facing Claude Code skills (see below)
 ```
 
 Everything is a Server Component except the files under `components/motion/`, `theme-toggle.tsx`,
@@ -116,6 +219,17 @@ Rules the animation layer sticks to:
 
 Edit [`src/lib/content.ts`](src/lib/content.ts). Nothing in that file may assert a statistic,
 outcome, client name or credential that is not in the source PDF.
+
+### The editor skills
+
+The `/update-content`, `/is-it-live` and `/undo-last-change` commands from Part 1 are project
+Claude Code skills, one directory each under [`.claude/skills/`](.claude/skills/) with a
+`SKILL.md` holding the operating procedure. They encode this README's content rules (string
+values only, no invented claims, never push a failing tree) and the publish loop: verify with
+`npm run lint` + `npm run build:static`, push to `main`, then `gh run watch` the Pages deploy.
+They are loaded at session start, so a new skill or an edit to one takes effect in the *next*
+Claude Code session. `.claude/settings.local.json` and other local tool state are gitignored;
+only `skills/` is meant to be committed.
 
 ### Changing the palette
 
