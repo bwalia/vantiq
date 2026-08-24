@@ -55,7 +55,9 @@ export function SiteFooter() {
                   {site.contact.email}
                 </a>
               </li>
-              <li className="text-sm text-muted">{site.contact.phone}</li>
+              {site.contact.phone ? (
+                <li className="text-sm text-muted">{site.contact.phone}</li>
+              ) : null}
             </ul>
           </div>
         </div>

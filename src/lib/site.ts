@@ -43,10 +43,15 @@ export const site = {
   locale: "en_GB",
 
   contact: {
-    /** TODO: replace with the real enquiries inbox. */
-    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "TODO@vantiq.example.com",
-    /** TODO: replace with the real contact number, or set to null to hide it. */
-    phone: "TODO — add phone number",
+    /**
+     * `||` rather than `??` on purpose: the Pages workflow always passes
+     * NEXT_PUBLIC_CONTACT_EMAIL, so an unset repository variable arrives as an
+     * empty string, which `??` would happily keep — silently publishing
+     * `mailto:` with no recipient.
+     */
+    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "admin@vantiqsocial.com",
+    /** Set to a string to show a contact number in the footer. */
+    phone: null as string | null,
     /** TODO: replace or set to null to hide the registration line in the footer. */
     companyNumber: "TODO — company registration number",
   },
