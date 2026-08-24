@@ -1,41 +1,27 @@
+import Image from "next/image";
+import markSrc from "./vantiq-mark.png";
+
 type MarkProps = {
   className?: string;
 };
 
 /**
- * The Vantiq mark: a fan of tapered chevrons radiating from a point.
- * Drawn in CSS-friendly SVG so it inherits colour and needs no image asset.
+ * The Vantiq mark: a stacked zigzag ribbon in the brand gradient.
+ *
+ * Supplied as artwork rather than drawn in code, so it cannot inherit `currentColor`
+ * the way the previous mark did — the gradient is baked in and reads on both themes.
+ * The file is tight-cropped to the glyph (no transparent padding), because any margin
+ * inside the image becomes invisible space in the lockup below.
  */
 export function VantiqMark({ className }: MarkProps) {
-  const blades = [
-    { angle: -68, opacity: 0.55 },
-    { angle: -42, opacity: 0.7 },
-    { angle: -16, opacity: 0.85 },
-    { angle: 10, opacity: 1 },
-    { angle: 36, opacity: 0.85 },
-    { angle: 62, opacity: 0.7 },
-    { angle: 88, opacity: 0.55 },
-  ];
-
   return (
-    <svg
-      viewBox="0 0 32 32"
-      role="presentation"
-      focusable="false"
+    <Image
+      src={markSrc}
+      alt=""
       aria-hidden="true"
+      priority
       className={className}
-    >
-      <g fill="currentColor" transform="translate(11 16)">
-        {blades.map(({ angle, opacity }) => (
-          <path
-            key={angle}
-            d="M0 -4.1 L13.5 0 L0 4.1 L4.6 0 Z"
-            opacity={opacity}
-            transform={`rotate(${angle})`}
-          />
-        ))}
-      </g>
-    </svg>
+    />
   );
 }
 
@@ -45,10 +31,14 @@ type WordmarkProps = {
   decorative?: boolean;
 };
 
+/**
+ * Mark + wordmark lockup. The proportions come from the supplied logo artwork:
+ * the mark stands ~1.16x the type size, set a hair under 0.15em away from it.
+ */
 export function VantiqWordmark({ className, decorative = false }: WordmarkProps) {
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
-      <VantiqMark className="size-8 shrink-0 text-accent-soft sm:size-9" />
+    <span className={`inline-flex items-center gap-1 ${className ?? ""}`}>
+      <VantiqMark className="h-8 w-auto shrink-0 sm:h-9" />
       <span
         className="text-[1.7rem] font-semibold leading-none tracking-[-0.035em] text-ink sm:text-[1.9rem]"
         aria-hidden={decorative ? "true" : undefined}
