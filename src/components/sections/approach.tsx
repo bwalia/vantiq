@@ -11,13 +11,21 @@ export function Approach() {
         titleId="why-meta-heading"
         kicker={whyMeta.kicker}
       >
+        {/*
+         * The standfirst: the argument of the section in one paragraph, set in
+         * the display serif at reading size. Serif at 1.5rem with open leading
+         * is a magazine standfirst; the same words in the body sans would read
+         * as just another paragraph.
+         */}
         <Reveal>
-          <p className="max-w-[52ch] text-[clamp(1.25rem,2.1vw,1.6rem)] leading-[1.45] tracking-[-0.015em]">
+          <p className="display-sm max-w-[46ch] text-[clamp(1.3rem,2.2vw,1.7rem)] leading-[1.44] text-ink">
             {whyMeta.body}
           </p>
         </Reveal>
 
-        <RevealGroup className="mt-16 grid gap-10 border-t border-hairline pt-12 md:grid-cols-2 md:gap-12 lg:gap-16">
+        <hr aria-hidden="true" className="rule-double mt-16" />
+
+        <RevealGroup className="grid gap-10 pt-12 md:grid-cols-2 md:gap-12 lg:gap-16">
           {craft.map((block) => (
             <RevealItem key={block.heading}>
               <MarkedHeading>{block.heading}</MarkedHeading>

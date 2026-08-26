@@ -1,5 +1,5 @@
 import { DrawBar, Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
-import { Prose, Section, SectionLayout } from "@/components/primitives";
+import { Blade, Prose, Section, SectionLayout } from "@/components/primitives";
 import { qualification } from "@/lib/content";
 
 /**
@@ -28,11 +28,9 @@ export function Qualification() {
             <RevealItem
               key={step.number}
               as="li"
-              className="grid items-center gap-x-8 gap-y-4 border-t border-hairline py-7 last:border-b sm:grid-cols-[3rem_minmax(7rem,16rem)_1fr] lg:py-8"
+              className="group grid items-center gap-x-8 gap-y-4 border-t border-hairline py-7 first:border-t-2 first:border-t-accent-soft last:border-b sm:grid-cols-[3rem_minmax(7rem,16rem)_1fr] lg:py-8"
             >
-              <span className="font-mono text-xs tracking-[0.18em] text-accent-text">
-                {step.number}
-              </span>
+              <span className="row-index">{step.number}</span>
 
               <DrawBar
                 width={BAR_WIDTHS[index]}
@@ -40,9 +38,15 @@ export function Qualification() {
                 className="hidden sm:block"
               />
 
-              <p className="text-[0.975rem] leading-relaxed lg:text-base">
-                <span className="font-medium">{step.title}</span>
-                <span className="text-muted"> — {step.detail}</span>
+              {/* The blade travels with the detail rather than sitting between
+                  the two spans: left on its own it strands at the end of a
+                  wrapped line and reads as a stray mark. */}
+              <p className="flex flex-wrap items-baseline gap-x-2.5 leading-relaxed">
+                <span className="display-sm text-[1.15rem] lg:text-[1.3rem]">{step.title}</span>
+                <span className="inline-flex items-baseline gap-x-2.5 text-[0.95rem] text-muted">
+                  <Blade className="h-2 w-3 translate-y-[-0.15em]" />
+                  {step.detail}
+                </span>
               </p>
             </RevealItem>
           ))}

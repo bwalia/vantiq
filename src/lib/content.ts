@@ -197,15 +197,6 @@ export const founders = {
       ],
     },
   ],
-  /**
-   * TODO: the source document leaves this figure as "[00]". Supply the real
-   * number, or delete the `together` block entirely — do not estimate it.
-   */
-  together: {
-    label: "Together",
-    figure: "[00]",
-    text: "inbound property portfolio leads delivered for clients",
-  },
 } as const;
 
 export const terms =

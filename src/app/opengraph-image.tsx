@@ -18,7 +18,7 @@ export default function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#fbf7f1",
           padding: "72px 80px",
           fontFamily: "sans-serif",
         }}
@@ -28,7 +28,7 @@ export default function OpengraphImage() {
             style={{
               width: "100%",
               height: 3,
-              background: "linear-gradient(to right, #c99a7c, #e8d3c6 45%, #ffffff)",
+              background: "linear-gradient(to right, #cf8b60, #ead4c0 45%, #fbf7f1)",
             }}
           />
           <div
@@ -37,7 +37,7 @@ export default function OpengraphImage() {
               marginTop: 28,
               fontSize: 20,
               letterSpacing: 4,
-              color: "#a96e48",
+              color: "#b5643a",
               textTransform: "uppercase",
             }}
           >
@@ -52,11 +52,11 @@ export default function OpengraphImage() {
               fontSize: 92,
               lineHeight: 1.02,
               letterSpacing: -3,
-              color: "#141110",
+              color: "#1b1512",
               fontWeight: 700,
             }}
           >
-            30-Day&nbsp;<span style={{ color: "#a96e48" }}>Lead</span>
+            30-Day&nbsp;<span style={{ color: "#b5643a" }}>Lead</span>
           </div>
           <div
             style={{
@@ -64,13 +64,13 @@ export default function OpengraphImage() {
               fontSize: 92,
               lineHeight: 1.02,
               letterSpacing: -3,
-              color: "#141110",
+              color: "#1b1512",
               fontWeight: 700,
             }}
           >
             Generation Trial
           </div>
-          <div style={{ display: "flex", marginTop: 26, fontSize: 30, color: "#6b615b" }}>
+          <div style={{ display: "flex", marginTop: 26, fontSize: 30, color: "#6d6054" }}>
             Our fee is £0. You pay only for the ads, direct to Meta.
           </div>
         </div>
@@ -81,11 +81,11 @@ export default function OpengraphImage() {
             alignItems: "center",
             justifyContent: "space-between",
             fontSize: 26,
-            color: "#141110",
+            color: "#1b1512",
           }}
         >
           <div style={{ display: "flex", fontWeight: 700, letterSpacing: -1 }}>vantiq</div>
-          <div style={{ display: "flex", color: "#6b615b", fontSize: 22 }}>
+          <div style={{ display: "flex", color: "#6d6054", fontSize: 22 }}>
             No contract · No auto-renewal
           </div>
         </div>

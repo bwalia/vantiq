@@ -36,10 +36,11 @@ export const site = {
     "A 30-day Meta advertising trial for UK care homes. We film your home, build and run the campaign, and send qualified enquiries straight to your team. Our fee is £0 — you pay only for the ads, direct to Meta.",
   /**
    * Canonical origin, used by canonical URLs, Open Graph, sitemap and robots.
-   * Set NEXT_PUBLIC_SITE_URL in the deploy environment.
-   * TODO: replace the fallback with the production domain.
+   * NEXT_PUBLIC_SITE_URL overrides it in the deploy environment — `||` for the
+   * same reason as the email below: an unset repository variable arrives as an
+   * empty string, not as undefined.
    */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://vantiq.example.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.vantiqsocial.com",
   locale: "en_GB",
 
   contact: {
@@ -50,10 +51,10 @@ export const site = {
      * `mailto:` with no recipient.
      */
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "admin@vantiqsocial.com",
-    /** Set to a string to show a contact number in the footer. */
+    /** A number here adds a phone line to the footer. null hides it. */
     phone: null as string | null,
-    /** TODO: replace or set to null to hide the registration line in the footer. */
-    companyNumber: "TODO — company registration number",
+    /** A number here adds the registration line to the footer. null hides it. */
+    companyNumber: null as string | null,
   },
 
   founders: [

@@ -11,10 +11,10 @@ export function EnquirySection() {
         <div className="lg:col-span-5 xl:col-span-4">
           <div className="lg:sticky lg:top-28">
             <Reveal from="left">
-              <Eyebrow>{closing.eyebrow}</Eyebrow>
+              <Eyebrow className="eyebrow-ruled">{closing.eyebrow}</Eyebrow>
               <h2
                 id="enquiry-heading"
-                className="mt-5 text-[clamp(2rem,4vw,3.25rem)] leading-[1.05] tracking-[-0.035em]"
+                className="display mt-6 text-[clamp(2.1rem,4.2vw,3.5rem)]"
               >
                 {closing.heading}
               </h2>
@@ -42,7 +42,7 @@ export function EnquirySection() {
                 Prefer email? Write to{" "}
                 <a
                   href={`mailto:${site.contact.email}`}
-                  className="text-accent-text underline decoration-accent-faint underline-offset-4 transition-colors hover:decoration-accent"
+                  className="link-sweep text-accent-text"
                 >
                   {site.contact.email}
                 </a>

@@ -30,7 +30,7 @@ export function MobileNav() {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex size-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-accent-soft hover:text-accent-text"
+        className="inline-flex size-9 items-center justify-center rounded-[3px] border border-hairline text-muted transition-colors hover:border-accent-soft hover:bg-accent-wash hover:text-accent-text"
       >
         <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
         <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4">
@@ -75,7 +75,7 @@ export function MobileNav() {
             <a
               href="#enquiry"
               onClick={() => setOpen(false)}
-              className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3.5 text-[0.975rem] font-medium text-bg transition-colors hover:bg-accent-text"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-[3px] bg-ink px-6 py-3.5 text-[0.975rem] font-medium text-bg transition-colors hover:bg-accent-text"
             >
               Book a filming date
             </a>

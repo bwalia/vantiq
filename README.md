@@ -345,10 +345,6 @@ These are left as visible `TODO` strings on purpose, so nothing invented can shi
 | Where | What |
 | --- | --- |
 | `src/lib/site.ts` → `url` | production domain (canonical URL, OG tags, sitemap, robots). Overridable with `NEXT_PUBLIC_SITE_URL`; the Pages workflow sets it for you |
-| `src/lib/site.ts` → `contact.email` | enquiries inbox — footer, enquiry section, JSON-LD and the email fallback. Overridable with `NEXT_PUBLIC_CONTACT_EMAIL` |
-| `src/lib/site.ts` → `contact.phone` | contact number, or remove the footer line |
-| `src/lib/site.ts` → `contact.companyNumber` | company registration line in the footer |
-| `src/lib/content.ts` → `founders.together.figure` | the source proposal leaves this as `[00]`. Supply the real number or delete the `together` block — do not estimate it |
 | `src/app/api/enquiries/route.ts` → `deliver()` | where enquiries actually go |
 
 The proposal's other bracketed placeholders (`[Care Home Name]`, `[your area]`, `[DATE]`) were

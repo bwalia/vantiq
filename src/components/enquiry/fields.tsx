@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useId } from "react";
 
 const controlClasses =
-  "w-full rounded-sm border border-hairline bg-bg px-4 py-3 text-[0.95rem] text-ink transition-colors placeholder:text-muted/70 hover:border-accent-soft focus:border-accent focus:outline-none aria-[invalid=true]:border-accent-strong";
+  "w-full rounded-[3px] border border-hairline bg-bg px-4 py-3 text-[0.95rem] text-ink transition-colors placeholder:text-muted/70 hover:border-accent-soft focus:border-accent focus:outline-none aria-[invalid=true]:border-accent-strong";
 
 function FieldShell({
   label,
@@ -168,7 +168,7 @@ export function RadioGroup({
             <label
               key={option}
               className={[
-                "flex cursor-pointer items-center gap-3 rounded-sm border px-4 py-3 text-[0.9rem] transition-colors",
+                "flex cursor-pointer items-center gap-3 rounded-[3px] border px-4 py-3 text-[0.9rem] transition-colors",
                 checked
                   ? "border-accent bg-accent-wash text-ink"
                   : "border-hairline hover:border-accent-soft",
@@ -227,7 +227,7 @@ export function CheckboxGroup({
             <label
               key={option}
               className={[
-                "flex cursor-pointer items-center gap-3 rounded-sm border px-4 py-3 text-[0.9rem] transition-colors",
+                "flex cursor-pointer items-center gap-3 rounded-[3px] border px-4 py-3 text-[0.9rem] transition-colors",
                 checked
                   ? "border-accent bg-accent-wash text-ink"
                   : "border-hairline hover:border-accent-soft",

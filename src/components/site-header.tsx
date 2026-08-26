@@ -18,7 +18,7 @@ export function SiteHeader() {
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="relative py-2 text-[1.0625rem] text-muted transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-accent-soft after:transition-transform after:duration-300 hover:text-accent-text hover:after:scale-x-100"
+                  className="relative py-2 text-[0.975rem] text-muted transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-accent-soft after:transition-transform after:duration-300 hover:text-accent-text hover:after:scale-x-100"
                 >
                   {item.label}
                 </a>
@@ -31,7 +31,7 @@ export function SiteHeader() {
           <ThemeToggle />
           <a
             href="#enquiry"
-            className="hidden cursor-pointer rounded-full bg-ink px-5 py-2.5 text-[0.975rem] font-medium text-bg transition-[background-color,transform] duration-200 hover:bg-accent-text active:scale-[0.98] md:inline-flex"
+            className="hidden cursor-pointer rounded-[3px] bg-ink px-5 py-2.5 text-[0.925rem] font-medium text-bg transition-[background-color,transform] duration-200 hover:bg-accent-text active:translate-y-px md:inline-flex"
           >
             Book a filming date
           </a>

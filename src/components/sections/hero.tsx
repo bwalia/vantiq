@@ -1,4 +1,4 @@
-import { LinkButton, Shell } from "@/components/primitives";
+import { Blade, LinkButton, Shell } from "@/components/primitives";
 import { hero } from "@/lib/content";
 
 /**
@@ -44,7 +44,7 @@ export function Hero() {
         <div className="grid gap-y-14 lg:grid-cols-12 lg:gap-x-12 xl:gap-x-16">
           <div className="lg:col-span-8 xl:col-span-7">
             <div className="reveal">
-              <p className="eyebrow">{hero.eyebrow}</p>
+              <p className="eyebrow eyebrow-ruled">{hero.eyebrow}</p>
 
               <h1 className="mt-6 text-[clamp(2.6rem,7.2vw,6.5rem)] leading-[0.98] tracking-[-0.04em]">
                 {hero.headlineLead} <span className="text-accent">{hero.headlineAccent}</span>
@@ -52,8 +52,9 @@ export function Hero() {
                 {hero.headlineTail}
               </h1>
 
-              <p className="mt-7 text-base text-muted">
-                {hero.standfirst} <span aria-hidden="true">—</span>{" "}
+              <p className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-base text-muted">
+                {hero.standfirst}
+                <Blade className="h-2.5 w-3.5" />
                 <span className="font-medium text-accent-text">{hero.standfirstAccent}</span>
               </p>
 

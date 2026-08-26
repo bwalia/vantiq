@@ -228,7 +228,7 @@ export function EnquiryForm() {
           </svg>
         </span>
         <p className="eyebrow mt-6">{handedOff ? "One last step" : "Enquiry received"}</p>
-        <h3 className="mt-4 text-2xl md:text-3xl">
+        <h3 className="display mt-4 text-[1.9rem] md:text-[2.4rem]">
           {handedOff
             ? "Your email is ready to send."
             : "Thank you — we'll be in touch shortly."}
@@ -291,7 +291,7 @@ export function EnquiryForm() {
           exit={reduced ? { opacity: 0 } : { opacity: 0, x: direction * -14 }}
           transition={{ duration: reduced ? 0 : 0.28, ease: EASE_OUT }}
         >
-          <h3 className="mt-3 text-2xl md:text-[1.75rem]">{step.title}</h3>
+          <h3 className="display-sm mt-3 text-[1.6rem] md:text-[1.9rem]">{step.title}</h3>
           <p className="mt-3 max-w-[56ch] text-sm leading-relaxed text-muted">
             {step.description}
           </p>
@@ -444,7 +444,7 @@ export function EnquiryForm() {
           type="button"
           onClick={handleBack}
           disabled={stepIndex === 0}
-          className="inline-flex cursor-pointer items-center justify-center rounded-full border border-hairline px-7 py-3.5 text-sm font-medium transition-[color,border-color,transform] duration-200 hover:border-accent-soft hover:text-accent-text active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
+          className="inline-flex cursor-pointer items-center justify-center rounded-[3px] border border-hairline px-7 py-3.5 text-sm font-medium transition-[color,border-color,background-color,transform] duration-200 hover:border-accent-soft hover:bg-accent-wash hover:text-accent-text active:translate-y-px disabled:pointer-events-none disabled:opacity-40"
         >
           Back
         </button>
@@ -453,7 +453,7 @@ export function EnquiryForm() {
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="inline-flex cursor-pointer items-center justify-center rounded-full bg-ink px-8 py-3.5 text-sm font-medium text-bg transition-[background-color,transform] duration-200 hover:bg-accent-text active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex cursor-pointer items-center justify-center rounded-[3px] bg-ink px-8 py-3.5 text-sm font-medium text-bg shadow-soft transition-[background-color,transform,box-shadow] duration-200 hover:bg-accent-text hover:shadow-lift active:translate-y-px disabled:pointer-events-none disabled:opacity-60"
           >
             {status === "submitting" ? "Sending…" : "Send enquiry"}
           </button>
@@ -461,7 +461,7 @@ export function EnquiryForm() {
           <button
             type="button"
             onClick={handleNext}
-            className="group inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full bg-ink px-8 py-3.5 text-sm font-medium text-bg transition-[background-color,transform] duration-200 hover:bg-accent-text active:scale-[0.98]"
+            className="group inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-[3px] bg-ink px-8 py-3.5 text-sm font-medium text-bg shadow-soft transition-[background-color,transform,box-shadow] duration-200 hover:bg-accent-text hover:shadow-lift active:translate-y-px"
           >
             Continue
           </button>

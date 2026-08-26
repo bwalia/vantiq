@@ -1,9 +1,13 @@
 @import "tailwindcss";
 
 /*
- * Vantiq design system.
- * Palette and typographic devices are extracted from the source proposal
- * (Vantiq — 30-Day Lead Generation Trial). The original PDF is kept locally in docs/, outside version control.
+ * Vantiq design system — "warm letterpress".
+ *
+ * The palette descends from the source proposal (Vantiq — 30-Day Lead
+ * Generation Trial), deepened from tan into sienna so the accent can carry
+ * body-size text as well as display graphics. The page is set like a printed
+ * supplement: a high-contrast serif for display, a humanist grotesque for
+ * reading, a mono for the marginalia, laid on warm paper with a real grain.
  *
  * Tailwind v4 is configured entirely here — there is no tailwind.config.ts.
  */
@@ -11,15 +15,16 @@
 :root {
   color-scheme: light;
 
-  --bg: #ffffff;
-  --surface: #fcf8f5;
-  --surface-strong: #faf3ed;
-  --ink: #141110;
-  --muted: #6b615b;
-  --hairline: #ede2d9;
+  /* Paper, not white. Every ground in the light theme is warm. */
+  --bg: #fbf7f1;
+  --surface: #f5eee4;
+  --surface-strong: #f0e6d9;
+  --ink: #1b1512;
+  --muted: #6d6054;
+  --hairline: #e2d6c6;
 
-  /* The document's exact accent. Display type and graphics only — at body
-     size it sits at 4.19:1 on white, so small text uses --accent-text. */
+  /* The document's exact accent. Display type and graphics use --accent;
+     anything at body size uses --accent-text, which clears 4.8:1 on paper. */
   --accent: #a96e48;
   --accent-text: #98613e;
   --accent-strong: #8e5b39;
@@ -27,19 +32,34 @@
   --accent-faint: #e8d3c6;
   --accent-wash: #f6ece4;
 
-  --shadow-soft: 0 1px 2px rgb(20 17 16 / 0.04), 0 8px 24px -12px rgb(20 17 16 / 0.08);
+  --shadow-soft: 0 1px 2px rgb(27 21 18 / 0.05), 0 12px 32px -18px rgb(27 21 18 / 0.16);
+  --shadow-lift: 0 2px 4px rgb(27 21 18 / 0.05), 0 24px 60px -28px rgb(27 21 18 / 0.28);
+
+  /* Ambient warm light behind the hero fan, and the feint on tinted bands.
+     Written as explicit rgb()/alpha rather than color-mix(..., transparent):
+     mixing a colour with `transparent` interpolates toward transparent BLACK,
+     which renders as a grey bloom instead of a glow. */
+  --glow: rgb(169 110 72 / 0.11);
+  --rule-faint: rgb(226 214 198 / 0.85);
+
+  /* Grain sits on top of everything, so it is tuned per theme. */
+  --grain-opacity: 0.055;
+  --grain-blend: multiply;
+  /* A one-pixel white highlight under display numerals, the way ink sits
+     on paper. Removed in dark, where there is no paper to catch light. */
+  --emboss: 0 1px 0 rgb(255 255 255 / 0.55);
 }
 
-/* Warm near-black, not neutral. Accent lifts for contrast. */
+/* Espresso, not neutral black. The accent lifts to hold contrast. */
 .theme-dark {
   color-scheme: dark;
 
-  --bg: #100d0c;
-  --surface: #171312;
-  --surface-strong: #1e1917;
-  --ink: #f4ede8;
-  --muted: #a99c93;
-  --hairline: #2a2320;
+  --bg: #14100d;
+  --surface: #1b1613;
+  --surface-strong: #231c17;
+  --ink: #f5ece1;
+  --muted: #a89889;
+  --hairline: #302620;
 
   --accent: #d79a6e;
   --accent-text: #d79a6e;
@@ -48,19 +68,27 @@
   --accent-faint: #3a2a21;
   --accent-wash: #1c1614;
 
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -18px rgb(0 0 0 / 0.7);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 60px -28px rgb(0 0 0 / 0.85);
+
+  --glow: rgb(215 154 110 / 0.1);
+  --rule-faint: rgb(48 38 32 / 0.9);
+
+  --grain-opacity: 0.05;
+  --grain-blend: overlay;
+  --emboss: none;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not(.theme-light) {
     color-scheme: dark;
 
-    --bg: #100d0c;
-    --surface: #171312;
-    --surface-strong: #1e1917;
-    --ink: #f4ede8;
-    --muted: #a99c93;
-    --hairline: #2a2320;
+    --bg: #14100d;
+    --surface: #1b1613;
+    --surface-strong: #231c17;
+    --ink: #f5ece1;
+    --muted: #a89889;
+    --hairline: #302620;
 
     --accent: #d79a6e;
     --accent-text: #d79a6e;
@@ -69,8 +97,21 @@
     --accent-faint: #3a2a21;
     --accent-wash: #1c1614;
 
-    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -18px rgb(0 0 0 / 0.7);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 60px -28px rgb(0 0 0 / 0.85);
+
+    --glow: rgb(215 154 110 / 0.1);
+    --rule-faint: rgb(48 38 32 / 0.9);
+
+    --grain-opacity: 0.05;
+    --grain-blend: overlay;
+    --emboss: none;
   }
+}
+
+/* The blade from the logo mark, as a mask so CSS pseudo-elements can draw it. */
+:root {
+  --blade-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M0 0.9 L15 5 L0 9.1 L5.1 5 Z' fill='%23000'/%3E%3C/svg%3E");
 }
 
 @theme inline {
@@ -91,6 +132,7 @@
   --font-mono: var(--font-geist-mono);
 
   --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
 
   --breakpoint-xs: 26rem;
 }
@@ -110,14 +152,32 @@
     background-color: var(--bg);
     color: var(--ink);
     /*
-     * `clip` rather than `hidden`: it contains the decorative beam and the
+     * `clip` rather than `hidden`: it contains the decorative fan and the
      * few pixels an entrance transform reaches past the edge, without creating
      * a scroll container — which would break every position: sticky rail.
      */
     overflow-x: clip;
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+   * Film grain over the whole page. Generated in the stylesheet rather than
+   * shipped as an image, so it costs nothing and tints with the theme. It sits
+   * above the content on purpose — grain that stops at the edge of a paragraph
+   * reads as a texture swatch, not as paper.
+   */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   ::selection {
@@ -146,18 +206,73 @@
 }
 
 @layer components {
-  /* Uppercase micro-label in the accent colour — the document's eyebrow device. */
+  /* Display type: the interface face, set large and tracked in tight. */
+  .display {
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  /* The accent word in a display line. Colour is the whole emphasis. */
+  .display-accent {
+    color: var(--accent);
+  }
+
+  .display-sm {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.14;
+  }
+
+  /* Figures that carry an argument: £0, 30, the funnel counts. */
+  .numeral {
+    font-weight: 600;
+    font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    text-shadow: var(--emboss);
+  }
+
+  /* Uppercase micro-label — the document's eyebrow device, in mono so it
+     reads as marginalia rather than as a small heading. */
   .eyebrow {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-size: 0.6875rem;
     font-weight: 500;
     line-height: 1.2;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--accent-text);
   }
 
   .eyebrow-muted {
     color: var(--muted);
+  }
+
+  /*
+   * Eyebrow prefixed with the logo's blade rather than a plain rule. Drawn as a
+   * mask so it takes its colour from the accent token and needs no markup —
+   * the label stays a single element that any component can opt into.
+   */
+  .eyebrow-ruled {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .eyebrow-ruled::before {
+    content: "";
+    width: 0.9rem;
+    height: 0.5625rem;
+    flex: none;
+    background-color: var(--accent-soft);
+    -webkit-mask-image: var(--blade-mask);
+    mask-image: var(--blade-mask);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
   }
 
   /* Thin rule that fades accent → transparent, as on every page header. */
@@ -170,6 +285,16 @@
       var(--accent-faint) 45%,
       transparent 100%
     );
+  }
+
+  /* Editorial double rule: a heavy stroke over a hairline, the way a printed
+     section break is set. */
+  .rule-double {
+    border: 0;
+    height: 4px;
+    background:
+      linear-gradient(var(--accent-soft), var(--accent-soft)) top / 100% 2px no-repeat,
+      linear-gradient(var(--hairline), var(--hairline)) bottom / 100% 1px no-repeat;
   }
 
   .rule-hairline {
@@ -195,6 +320,74 @@
       font-size: 1.0625rem;
     }
   }
+
+  /*
+   * Faint ruled ground for tinted bands — the feint on a sheet of paper.
+   * Confined to the top of the band and faded out well above the body copy:
+   * a rule that reaches the text reads as a strike-through, not as paper.
+   */
+  .paper-rules {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--rule-faint) 0 1px,
+      transparent 1px 2.75rem
+    );
+    opacity: 0.55;
+    /* Stops inside the band's own top padding, so it never reaches a line
+       of type. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 12%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 12%);
+  }
+
+  /*
+   * Section index.
+   *
+   * This was an oversized outlined numeral. An outline is a 1px stroke however
+   * large the glyph is, and against the dark ground that stroke measured about
+   * 2.6:1 — technically present, practically invisible. Solid mono in the
+   * accent reads at roughly 8:1 on the dark ground and 4.8:1 on paper, so it
+   * holds in both themes, and the monospace figures keep it feeling like an
+   * index rather than a heading competing with the title below it.
+   */
+  .section-index {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--accent-text);
+  }
+
+  @media (min-width: 64rem) {
+    .section-index {
+      font-size: 2rem;
+    }
+  }
+
+  /* The ordinal beside a list row — the same device, at label size. */
+  .row-index {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--accent-text);
+  }
+
+  /* Underline that draws in from the left on hover. */
+  .link-sweep {
+    background-image: linear-gradient(var(--accent-soft), var(--accent-soft));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .link-sweep:hover {
+    background-size: 100% 1px;
+  }
 }
 
 @layer utilities {
@@ -204,17 +397,50 @@
    * hydration. A keyframe starts on first paint instead.
    */
   .reveal {
-    animation: reveal-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: reveal-up 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
+  /* Staggered entrance: each step is one beat behind the last. */
   .reveal-delayed {
     animation-delay: 0.16s;
+  }
+
+  .reveal-1 {
+    animation-delay: 0.06s;
+  }
+  .reveal-2 {
+    animation-delay: 0.14s;
+  }
+  .reveal-3 {
+    animation-delay: 0.24s;
+  }
+  .reveal-4 {
+    animation-delay: 0.34s;
+  }
+  .reveal-5 {
+    animation-delay: 0.44s;
   }
 
   @keyframes reveal-up {
     from {
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* The hero fan brightens over four seconds as the page settles, then holds. */
+  .fan-in {
+    animation: fan-in 2.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes fan-in {
+    from {
+      opacity: 0;
+      transform: translateX(3rem) rotate(-5deg);
     }
     to {
       opacity: 1;

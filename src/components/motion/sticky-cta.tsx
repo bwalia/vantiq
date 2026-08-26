@@ -33,12 +33,12 @@ export function StickyCta() {
         >
           <div className="flex items-center justify-between gap-4 px-5 py-3.5">
             <div className="min-w-0">
-              <p className="text-sm font-medium">Our fee is £0</p>
+              <p className="display-sm text-[1.05rem]">Our fee is £0</p>
               <p className="truncate text-xs text-muted">30-day trial · no contract</p>
             </div>
             <a
               href="#enquiry"
-              className="shrink-0 cursor-pointer rounded-full bg-ink px-5 py-3 text-sm font-medium text-bg transition-transform duration-200 active:scale-[0.98]"
+              className="shrink-0 cursor-pointer rounded-[3px] bg-ink px-5 py-3 text-sm font-medium text-bg transition-transform duration-200 active:translate-y-px"
             >
               Book filming
             </a>

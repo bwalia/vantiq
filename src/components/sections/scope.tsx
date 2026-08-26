@@ -18,7 +18,7 @@ function ScopeList({
   return (
     <div className={tone === "yours" ? "md:border-l md:border-hairline md:pl-10 lg:pl-14" : ""}>
       <MarkedHeading id={headingId}>{heading}</MarkedHeading>
-      <ul className="mt-6 flex flex-col">
+      <ul className="mt-6 flex flex-col border-t-2 border-accent-soft">
         {items.map((item) => (
           <li
             key={item.text}
@@ -70,10 +70,12 @@ export function Scope() {
           </RevealItem>
         </RevealGroup>
 
-        <RevealGroup className="mt-16 grid gap-px overflow-hidden border border-hairline bg-hairline md:grid-cols-2">
+        {/* The two standing objections, answered on the warm ground the source
+            document reserves for its reassurance panels. */}
+        <RevealGroup className="mt-16 grid gap-px bg-hairline md:grid-cols-2">
           {reassurance.map((card) => (
-            <RevealItem key={card.heading} className="bg-surface-strong p-8 lg:p-10">
-              <MarkedHeading as="h3" className="text-base md:text-lg">
+            <RevealItem key={card.heading} className="card-warm p-8 lg:p-10">
+              <MarkedHeading as="h3" className="text-lg md:text-xl">
                 {card.heading}
               </MarkedHeading>
               <p className="mt-4 max-w-[46ch] text-[0.95rem] leading-[1.75] text-muted">

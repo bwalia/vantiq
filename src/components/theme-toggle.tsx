@@ -75,7 +75,7 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={label}
       title={label}
-      className="inline-flex size-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-accent-soft hover:text-accent-text"
+      className="inline-flex size-9 items-center justify-center rounded-[3px] border border-hairline text-muted transition-colors hover:border-accent-soft hover:bg-accent-wash hover:text-accent-text"
     >
       <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4">
         {theme === "dark" ? (

@@ -66,7 +66,7 @@ export function SiteFooter() {
           <p>
             © {year} {site.legalName}. All rights reserved.
           </p>
-          <p>{site.contact.companyNumber}</p>
+          {site.contact.companyNumber ? <p>{site.contact.companyNumber}</p> : null}
         </div>
       </Shell>
     </footer>

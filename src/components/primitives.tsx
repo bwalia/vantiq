@@ -47,14 +47,19 @@ export function Section({ id, children, className, tinted = false, ...rest }: Se
       id={id}
       {...rest}
       className={[
-        "scroll-mt-24 py-20 md:py-24 lg:py-28 xl:py-32",
+        "relative scroll-mt-24 py-20 md:py-24 lg:py-28 xl:py-32",
         tinted ? "bg-surface" : "",
         className ?? "",
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      <Shell>{children}</Shell>
+      {/* Tinted bands get the faint feint of ruled paper, masked to fade out
+          before it reaches the body copy. */}
+      {tinted ? (
+        <div aria-hidden="true" className="paper-rules pointer-events-none absolute inset-0" />
+      ) : null}
+      <Shell className="relative">{children}</Shell>
     </section>
   );
 }
@@ -86,17 +91,25 @@ export function SectionLayout({
       <div className="lg:col-span-4 xl:col-span-3">
         <div className="lg:sticky lg:top-28">
           <Reveal from="left">
-            <p className="eyebrow font-mono">{index}</p>
+            {/*
+             * The section index, set as a chapter mark: the numeral with a
+             * rule running off to the right. It is real text, not decoration,
+             * so the numbering is available to a screen reader too.
+             */}
+            <p className="flex items-center gap-4">
+              <span className="section-index">{index}</span>
+              <span aria-hidden="true" className="h-px flex-1 bg-hairline" />
+            </p>
             <Heading
               id={titleId}
-              className="mt-4 text-2xl leading-[1.15] md:text-3xl xl:text-[2.1rem]"
+              className="display-sm mt-5 text-[1.75rem] md:text-[2.1rem] xl:text-[2.45rem]"
             >
               {title}
             </Heading>
             {kicker ? (
               <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-muted">{kicker}</p>
             ) : null}
-            <span aria-hidden="true" className="mt-6 block h-0.5 w-12 bg-accent-soft" />
+            <hr aria-hidden="true" className="rule-double mt-7 w-16" />
           </Reveal>
         </div>
       </div>
@@ -135,7 +148,28 @@ export function Eyebrow({
   );
 }
 
-/** Heading with the filled accent square, for headings outside the rail. */
+/**
+ * A single blade from the logo mark — the tapered arrow the identity is built
+ * from — reused as the page's marker: bullets, sub-head markers, and the
+ * separator between a label and its detail.
+ *
+ * It replaces the em-dashes and plain rules those places used to carry. One
+ * shape doing all three jobs is what makes it read as a device rather than as
+ * punctuation, and it runs the wordmark's motif down to the smallest label.
+ */
+export function Blade({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 10"
+      aria-hidden="true"
+      className={["shrink-0 text-accent-soft", className ?? ""].filter(Boolean).join(" ")}
+    >
+      <path d="M0 0.9 L15 5 L0 9.1 L5.1 5 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Heading marked with a blade, for headings outside the rail. */
 export function MarkedHeading({
   id,
   children,
@@ -150,14 +184,11 @@ export function MarkedHeading({
   return (
     <Tag
       id={id}
-      className={["flex items-baseline gap-3 text-lg md:text-xl", className ?? ""]
+      className={["display-sm flex items-baseline gap-3 text-xl md:text-2xl", className ?? ""]
         .filter(Boolean)
         .join(" ")}
     >
-      <span
-        aria-hidden="true"
-        className="inline-block size-2 shrink-0 translate-y-[-0.1em] bg-accent-soft"
-      />
+      <Blade className="size-3 translate-y-[-0.08em]" />
       <span>{children}</span>
     </Tag>
   );
@@ -167,14 +198,12 @@ export function RuleFade({ className }: { className?: string }) {
   return <hr className={["rule-fade", className ?? ""].filter(Boolean).join(" ")} />;
 }
 
-/** The short accent dash used as a list bullet throughout the document. */
+/**
+ * List bullet. Was a short dash; now the blade, pointing at the item it
+ * introduces.
+ */
 export function Dash() {
-  return (
-    <span
-      aria-hidden="true"
-      className="mt-[0.72em] inline-block h-px w-3 shrink-0 bg-accent-soft"
-    />
-  );
+  return <Blade className="mt-[0.5em] size-2.5" />;
 }
 
 type ButtonProps = {
@@ -184,13 +213,18 @@ type ButtonProps = {
   className?: string;
 };
 
+/**
+ * Buttons are set as tight rectangles rather than pills. Everything else on the
+ * page is ruled and rectilinear; a pill would be the only soft shape on it, and
+ * the warmth is meant to come from the type and the paper, not from a radius.
+ */
 export function LinkButton({ href, children, variant = "primary", className }: ButtonProps) {
   const base =
-    "group inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-medium transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98]";
+    "group inline-flex cursor-pointer items-center justify-center gap-3 rounded-[3px] px-7 py-3.5 text-sm font-medium tracking-[-0.005em] transition-[background-color,border-color,color,transform,box-shadow] duration-200 active:translate-y-px";
   const styles =
     variant === "primary"
-      ? "bg-ink text-bg hover:bg-accent-text"
-      : "border border-hairline text-ink hover:border-accent-soft hover:text-accent-text";
+      ? "bg-ink text-bg shadow-soft hover:bg-accent-text hover:shadow-lift"
+      : "border border-hairline text-ink hover:border-accent-soft hover:bg-accent-wash hover:text-accent-text";
 
   return (
     <a href={href} className={[base, styles, className ?? ""].filter(Boolean).join(" ")}>
@@ -199,7 +233,7 @@ export function LinkButton({ href, children, variant = "primary", className }: B
         <svg
           viewBox="0 0 16 16"
           aria-hidden="true"
-          className="size-3.5 transition-transform duration-200 group-hover:translate-x-1"
+          className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
         >
           <path
             d="M2 8h11M9 4l4 4-4 4"
