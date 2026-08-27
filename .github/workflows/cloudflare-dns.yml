@@ -21,7 +21,7 @@ on:
       RECORD_CONTENT:
         description: "Record value — the WSL Proxy edge"
         required: true
-        default: "pop0.wslproxy.com"
+        default: "lon1.pop0.uk"
         type: string
       RECORD_TYPE:
         description: "Record type"
