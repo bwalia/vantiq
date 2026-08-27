@@ -10,7 +10,7 @@ name: Register WSL Proxy Domains (Vantiq)
 #
 # Chain once live:
 #   browser -> vantiq.fictionally.org --(Cloudflare CNAME, DNS-only/grey cloud)-->
-#   pop0.wslproxy.com (terminates TLS via lua-resty-auto-ssl)
+#   lon1.pop0.uk (terminates TLS via lua-resty-auto-ssl)
 #   -> http://185.199.10x.153:80 with Host: vantiq.fictionally.org -> GitHub Pages
 #
 # Two prerequisites this workflow CANNOT do for you:

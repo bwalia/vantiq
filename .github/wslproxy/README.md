@@ -17,7 +17,7 @@ Modelled on the same layout in `monitoring-go` and `diy-tax-return-uk`.
 ```
 browser
   -> vantiq.fictionally.org        Cloudflare CNAME, DNS-only (grey cloud)
-  -> pop0.wslproxy.com             terminates TLS via lua-resty-auto-ssl
+  -> lon1.pop0.uk             terminates TLS via lua-resty-auto-ssl
   -> http://185.199.10x.153:80     with Host: vantiq.fictionally.org
   -> GitHub Pages                  serves the exported site
 ```
@@ -83,7 +83,7 @@ Do it in this order, or the site is down between steps:
 3. Re-run with `ACTIVATE_CONFIG=true` so the vhost is live and holding a
    certificate *before* any traffic is sent to it.
 4. Run **->Cloudflare DNS** with `DRY_RUN=true`, then `DRY_RUN=false`, to move the
-   record to `pop0.wslproxy.com`, grey cloud.
+   record to `lon1.pop0.uk`, grey cloud.
 5. Verify: `curl -sI https://vantiq.fictionally.org/` → `200`, and the certificate
    issuer is Let's Encrypt rather than Cloudflare.
 
@@ -91,7 +91,7 @@ To roll back, point the Cloudflare record at `bwalia.github.io` (orange cloud, S
 mode Full) and the site is back on the previous path.
 
 Step 4 is scripted: `scripts/cloudflare-unproxy.sh` grey-clouds the record with a
-`Zone:DNS:Edit` token, and `--target pop0.wslproxy.com` points it at the pop in the
+`Zone:DNS:Edit` token, and `--target lon1.pop0.uk` points it at the pop in the
 same call.
 
 ## Adding another domain later
