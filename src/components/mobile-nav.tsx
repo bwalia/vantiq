@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { nav } from "@/lib/site";
+import { bookHref, nav } from "@/lib/site";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -62,23 +63,23 @@ export function MobileNav() {
         <ul className="flex flex-col">
           {nav.map((item) => (
             <li key={item.href}>
-              <a
+              <Link
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className="block border-b border-hairline py-4 text-[1.0625rem] text-ink transition-colors hover:text-accent-text"
               >
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
           <li>
-            <a
-              href="#enquiry"
+            <Link
+              href={bookHref}
               onClick={() => setOpen(false)}
               className="mt-5 inline-flex w-full items-center justify-center rounded-[3px] bg-ink px-6 py-3.5 text-[0.975rem] font-medium text-bg transition-colors hover:bg-accent-text"
             >
               Book a filming date
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

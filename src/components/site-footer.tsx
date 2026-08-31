@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { VantiqWordmark } from "@/components/logo";
 import { RuleFade, Shell } from "@/components/primitives";
 import { terms } from "@/lib/content";
-import { nav, site } from "@/lib/site";
+import { bookHref, careHomeSections, nav, site } from "@/lib/site";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -21,25 +22,39 @@ export function SiteFooter() {
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-3 xl:col-span-3 xl:col-start-6">
-            <h2 className="eyebrow">On this page</h2>
+            <h2 className="eyebrow">Pages</h2>
             <ul className="mt-5 flex flex-col gap-3">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     className="text-sm text-muted transition-colors hover:text-accent-text"
                   >
                     {item.label}
-                  </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <h2 className="eyebrow mt-8">On the care home page</h2>
+            <ul className="mt-5 flex flex-col gap-3">
+              {careHomeSections.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-muted transition-colors hover:text-accent-text"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
               <li>
-                <a
-                  href="#enquiry"
+                <Link
+                  href={bookHref}
                   className="text-sm text-muted transition-colors hover:text-accent-text"
                 >
                   Book a filming date
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>

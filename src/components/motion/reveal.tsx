@@ -143,15 +143,18 @@ export function DrawBar({
   width,
   delay = 0,
   className,
+  thickness = "h-0.75",
 }: {
   width: string;
   delay?: number;
   className?: string;
+  /** Track height. A hairline reads as a rule; a chart bar needs weight. */
+  thickness?: string;
 }) {
   return (
     <span
       aria-hidden="true"
-      className={["relative block h-0.75 w-full bg-accent-faint", className ?? ""]
+      className={["relative block w-full bg-accent-faint", thickness, className ?? ""]
         .filter(Boolean)
         .join(" ")}
     >

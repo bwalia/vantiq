@@ -208,3 +208,220 @@ export const closing = {
   body: "We'll confirm the slot, film at a time that suits the home, and get you live within the week.",
   cta: "Start your enquiry",
 } as const;
+
+/**
+ * Home page.
+ *
+ * Positioning for both sectors. The proof line is the only figure on the page
+ * and it is carried through to /property, where it is evidenced — proof sits
+ * beside the claim it supports rather than being asserted once and dropped.
+ */
+export const home = {
+  eyebrow: "Care homes · Property",
+  headlineLead: "Growth systems for",
+  headlineAccent: "care homes",
+  headlineTail: "and property",
+  standfirst:
+    "Bespoke funnels that filter out browsers and send your team people who are ready to talk.",
+  body: "Vantiq implements growth systems end to end. We film the content, build the funnel, run the paid social, and qualify every enquiry before it reaches you. You take the calls; everything in front of that is ours.",
+  proof: {
+    figure: "69",
+    text: "qualified landlord leads in 33 active ad days, for a property leasing company with a portfolio over £450m.",
+    href: "/property",
+    cta: "See how that campaign ran",
+  },
+  primaryCta: "See the care home trial",
+  secondaryCta: "See the property results",
+
+  /** The tagline moment: the argument in one sentence, set large. */
+  tagline: "Most leads are lists. Ours arrive already qualified, already in your area, and already expecting your call.",
+
+  routes: [
+    {
+      index: "01",
+      title: "Care homes",
+      href: "/care-homes",
+      note: "A 30 day Meta advertising trial. We film your home, build and run the campaign, and send qualified enquiries to your team. Our fee is £0.",
+      cta: "Read the trial offer",
+    },
+    {
+      index: "02",
+      title: "Property",
+      href: "/property",
+      note: "Paid social for letting and management businesses. We bring in landlords who already own property, sorted by portfolio size and area.",
+      cta: "See the property results",
+    },
+  ],
+
+  /** Outcome first, mechanism second. */
+  benefits: [
+    {
+      title: "Leads that answer the phone",
+      note: "Every enquiry passes a question set before it reaches you, so out of area and early browsers drop away rather than filling your team's morning.",
+    },
+    {
+      title: "Content that does the convincing",
+      note: "We film the real place and the real people. Families and landlords decide long before they call, and stock photography does not survive that decision.",
+    },
+    {
+      title: "A system, not a burst",
+      note: "Anyone who watched but did not enquire gets retargeted. The campaign sharpens on its own data instead of restarting from nothing each month.",
+    },
+    {
+      title: "You keep the account",
+      note: "The ad account stays in your name and you see every penny of spend. We never hold your budget.",
+    },
+  ],
+} as const;
+
+/**
+ * Property page.
+ *
+ * The offer and the audience come first, the evidence second. Everything in
+ * `results` is transcribed from the client's own lead generation export, with
+ * one exception noted on `portfolioValue`.
+ */
+export const property = {
+  eyebrow: "Property · letting and management",
+  headlineLead: "Landlords who already",
+  headlineAccent: "own property",
+  headlineTail: "sent to you every week",
+  standfirst: "Paid social for letting and management businesses",
+  standfirstAccent: "built around the portfolio you want",
+  body: "Most property lead generation sells the same scraped list to everyone on it. We run paid social into a funnel built for your business, ask the questions that separate a portfolio landlord from a curious one, and send you the answers with the contact details.",
+  primaryCta: "Talk to us about property",
+
+  /** What the funnel is pointed at. */
+  audiences: [
+    {
+      title: "Portfolio landlords",
+      note: "Owners with four or more units, where one relationship is worth years of management fees rather than a single let.",
+    },
+    {
+      title: "Accidental and first time landlords",
+      note: "One or two properties, usually inherited or previously lived in, and usually looking for someone to take the work off them.",
+    },
+    {
+      title: "Landlords in a specific borough",
+      note: "Targeting is set to the areas you actually cover, so you are not paying to reach owners two hours outside your patch.",
+    },
+    {
+      title: "Owners with a live problem",
+      note: "Void periods, late rent, a tenant who has stopped answering. The angle that wins is the one naming the problem they already have.",
+    },
+  ],
+
+  steps: [
+    {
+      number: "01",
+      title: "We build the angle",
+      detail: "the message is written against the problem, not the service",
+    },
+    {
+      number: "02",
+      title: "Paid social carries it",
+      detail: "Facebook and Instagram, aimed at your boroughs",
+    },
+    {
+      number: "03",
+      title: "The funnel qualifies",
+      detail: "portfolio size, property type and area, before you see it",
+    },
+    {
+      number: "04",
+      title: "You get the enquiry",
+      detail: "contact details and every answer, sent live",
+    },
+  ],
+} as const;
+
+/**
+ * The client campaign, presented as evidence for the page above.
+ *
+ * Every figure is transcribed from the client's lead generation overview
+ * (25 May to 3 Aug 2026) with one exception: `portfolioValue` is the client's
+ * own stated portfolio size, supplied separately.
+ *
+ * The underlying export is a row per lead and carries names, emails, phone
+ * numbers and addresses. None of that is here, and none of it belongs on a
+ * public page: only counts and shares.
+ *
+ * The client is deliberately not named. If they give written permission to be
+ * credited, add the name here and in the results heading.
+ *
+ * `minimumUnits` is arithmetic, not an estimate: it is the floor of the stated
+ * portfolio bands (34x1 + 20x4 + 9x10 + 6x20). The real figure is higher,
+ * because every band except the first is open at the top.
+ */
+export const results = {
+  client: "a property leasing company",
+  portfolioValue: "£450m+",
+  source:
+    "Client lead generation overview · 69 leads · 25 May to 3 Aug 2026 · Facebook and Instagram",
+
+  headline: { value: "69", label: "Qualified landlord leads", note: "Every one a self-identified property owner." },
+
+  /** The three numbers that frame the rest. */
+  frame: [
+    {
+      value: "33",
+      label: "Active ad days",
+      note: "The days the ads actually ran. That is the number the 69 should be read against.",
+    },
+    {
+      value: "2.1",
+      label: "High quality leads per active day",
+      note: "Not raw volume. All 69 stated the size of their portfolio, and half of them hold four or more properties.",
+    },
+    { value: "93%", label: "Form completion rate", note: "Reached the end of the question set." },
+  ],
+
+  portfolio: {
+    heading: "Who they turned out to be",
+    kicker: "Portfolio size, as a share of the 69.",
+    rows: [
+      { label: "1 to 3 properties", count: 34, share: 49 },
+      { label: "4 to 9 properties", count: 20, share: 29 },
+      { label: "10 to 20 properties", count: 9, share: 13 },
+      { label: "20+ properties", count: 6, share: 9 },
+    ],
+    note: "Half the list (35 of 69) manages four or more properties, and 15 of them manage ten or more. That is the half where one relationship is worth years of fees, and it is the half most lead sources never reach.",
+  },
+
+  pipeline: {
+    heading: "What that represents",
+    value: "324",
+    unit: "rental units, at minimum",
+    note: "Counting every lead at the bottom of their stated band. Each band except the first is open at the top, so the true figure is higher. Apply your own management fee per unit to size the pipeline.",
+  },
+
+  propertyType: {
+    heading: "What they own",
+    kicker: "Of the 69, eight did not specify.",
+    rows: [
+      { label: "Flats and apartments", count: 30 },
+      { label: "Houses", count: 28 },
+      { label: "Mixed portfolio", count: 2 },
+      { label: "Commercial", count: 1 },
+    ],
+  },
+
+  source_split: {
+    heading: "Where they came from",
+    platforms: [
+      { name: "Facebook", count: "48", share: "70%" },
+      { name: "Instagram", count: "19", share: "28%" },
+    ],
+    note: "A further two came through other placements. Facebook carried the campaign, but Instagram was not a rounding error either.",
+  },
+
+  painPoints: {
+    heading: "What they said they were struggling with",
+    kicker: "Self-reported, and 33 of the 69 did not specify.",
+    rows: [
+      { label: "Multiple compounding issues", count: 12 },
+      { label: "Tenant management", count: 10 },
+      { label: "Void periods", count: 10 },
+    ],
+  },
+} as const;

@@ -2,9 +2,9 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { Dash, Section, SectionLayout } from "@/components/primitives";
 import { founders, terms } from "@/lib/content";
 
-export function Founders() {
+export function Founders({ tinted = false }: { tinted?: boolean } = {}) {
   return (
-    <Section id="founders" aria-labelledby="founders-heading">
+    <Section id="founders" tinted={tinted} aria-labelledby="founders-heading">
       <SectionLayout
         index={founders.index}
         title={founders.heading}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion/motion-provider";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { themeInitScript } from "@/components/theme-toggle";
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Skip to content
         </a>
+        <ScrollToTop />
         <MotionProvider>
           <SiteHeader />
           <main id="main" className="flex-1">

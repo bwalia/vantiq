@@ -63,9 +63,24 @@ export const site = {
   ],
 } as const;
 
+/**
+ * Top-level navigation. These are routes, not anchors: the site is three pages
+ * now, and the per-section anchors that used to sit here only ever resolved on
+ * what is now /care-homes.
+ */
 export const nav = [
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#pricing", label: "What it costs" },
-  { href: "#included", label: "What's included" },
-  { href: "#founders", label: "Who you'll work with" },
+  { href: "/", label: "Home" },
+  { href: "/care-homes", label: "Care homes" },
+  { href: "/property", label: "Property" },
 ] as const;
+
+/** Sections within /care-homes, used by the footer's "on this page" list. */
+export const careHomeSections = [
+  { href: "/care-homes#how-it-works", label: "How it works" },
+  { href: "/care-homes#pricing", label: "What it costs" },
+  { href: "/care-homes#included", label: "What's included" },
+  { href: "/care-homes#founders", label: "Who you'll work with" },
+] as const;
+
+/** Where every "book" call to action points. */
+export const bookHref = "/care-homes#enquiry";

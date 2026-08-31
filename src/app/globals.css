@@ -376,6 +376,23 @@
     color: var(--accent-text);
   }
 
+  /*
+   * Tagline reveal. The muted state only applies once the component has armed
+   * it, so the sentence is fully legible with JavaScript off.
+   */
+  .tagline-word {
+    display: inline-block;
+    transition: opacity 0.55s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .tagline[data-armed="true"] .tagline-word {
+    opacity: 0.26;
+  }
+
+  .tagline[data-armed="true"] .tagline-word.is-lit {
+    opacity: 1;
+  }
+
   /* Underline that draws in from the left on hover. */
   .link-sweep {
     background-image: linear-gradient(var(--accent-soft), var(--accent-soft));

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -226,8 +227,12 @@ export function LinkButton({ href, children, variant = "primary", className }: B
       ? "bg-ink text-bg shadow-soft hover:bg-accent-text hover:shadow-lift"
       : "border border-hairline text-ink hover:border-accent-soft hover:bg-accent-wash hover:text-accent-text";
 
+  const classes = [base, styles, className ?? ""].filter(Boolean).join(" ");
+  // In-app routes go through the router; hashes and mailto: stay plain anchors.
+  const Tag = href.startsWith("/") ? Link : "a";
+
   return (
-    <a href={href} className={[base, styles, className ?? ""].filter(Boolean).join(" ")}>
+    <Tag href={href} className={classes}>
       {children}
       {variant === "primary" ? (
         <svg
@@ -245,6 +250,6 @@ export function LinkButton({ href, children, variant = "primary", className }: B
           />
         </svg>
       ) : null}
-    </a>
+    </Tag>
   );
 }
